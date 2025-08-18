@@ -1,0 +1,143 @@
+body {
+  background-color: #FDFCF9;
+}
+
+.menu-container {
+  background-color: #FDFCF9;
+  min-height: 100vh;
+}
+
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.food-card {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(85, 107, 47, 0.15);
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid #d4d8c4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.food-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(85, 107, 47, 0.25);
+}
+
+.food-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+}
+
+.food-card h3 {
+  color: #556b2f;
+  font-size: 20px;
+  margin: 10px 0 5px;
+}
+
+.food-card p {
+  color: #444;
+  margin: 0 0 12px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.cart-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qty-btn,
+.add-button {
+  padding: 6px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #6b8e23;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.qty-btn:hover,
+.add-button:hover {
+  background-color: #4e691a;
+}
+
+.cart-controls span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #556b2f;
+}
+
+@media (max-width: 500px) {
+  .food-card {
+    padding: 10px;
+  }
+
+  .food-card h3 {
+    font-size: 18px;
+  }
+
+  .food-card p {
+    font-size: 14px;
+  }
+
+  .qty-btn,
+  .add-button {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
+.menu-categories {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover {
+  transform: scale(1.05);
+}
+
+.category-card img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.category-card p {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}

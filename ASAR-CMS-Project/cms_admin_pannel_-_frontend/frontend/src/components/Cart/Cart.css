@@ -1,0 +1,605 @@
+/* === Base Container === */
+.cart-container {
+  min-height: 100vh;
+  width: 100vw;
+  padding: 0px 30px;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee, #e0f7fa, #f1f8e9);
+  background-size: 400% 400%;
+  animation: gradientFlow 12s ease infinite, fadeIn 1s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+/* === Full Height Setup === */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* === Animated Gradient Background === */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(30px) scale(0.98);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* === Heading === */
+.cart-container h2 {
+  font-size: 2.7rem;
+  font-weight: 700;
+  color: #2e7d32;
+  margin-bottom: 10px;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* === Cart Table === */
+.cart-table {
+  width: 100%;
+  max-width: 1000px;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  animation: fadeIn 0.7s ease-out forwards;
+  transform-origin: top center;
+}
+
+.cart-table th,
+.cart-table td {
+  padding: 16px 20px;
+  text-align: center;
+  color: #333;
+  font-size: 16px;
+}
+
+.cart-table th {
+  background: linear-gradient(to right, #66bb6a, #43a047);
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.cart-table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.cart-table tr:nth-child(odd) td {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cart-table tr:hover td {
+  background-color: rgba(200, 230, 201, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+/* === Quantity Buttons === */
+.qty-btn {
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(to right, #a5d6a7, #c8e6c9);
+  border: none;
+  border-radius: 6px;
+  margin: 0 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.qty-btn:hover {
+  background: #81c784;
+  color: white;
+}
+
+.qty-display {
+  font-weight: bold;
+}
+
+/* === Remove Button === */
+.remove-btn {
+  background: linear-gradient(135deg, #d32f2f, #b71c1c);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.remove-btn:hover {
+  background: linear-gradient(135deg, #b71c1c, #7b1f1f);
+  transform: scale(1.05);
+}
+
+/* === Cart Summary === */
+.cart-summary {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 20px;
+  animation: fadeIn 1s ease-out forwards;
+  transform-origin: bottom center;
+  transition: all 0.3s ease;
+}
+
+.cart-summary:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  transform: scale(1.01);
+}
+
+/* === Place Order Button === */
+.place-order-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+.place-order-btn:hover {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.5);
+}
+
+/* === Order Confirmation Box === */
+.order-confirmation {
+  margin-top: 60px;
+  max-width: 1200px;
+  width: 80%;
+  padding: 40px 60px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(245,245,245,0.3));
+  border-radius: 60px;
+  box-shadow: 80px 80px 30px rgba(0,0,0,0.1), -8px -8px 30px rgba(255,255,255,0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  position: relative;
+  text-align: center;
+  animation: scaleFadeIn 1s ease-out;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+}
+
+.order-confirmation:hover {
+  transform: scale(1.01);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.order-confirmation::before {
+  content: "";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 80px;
+  background: white;
+  color: #4caf50;
+  border-radius: 50%;
+  padding: 15px;
+  box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+  animation: dropBounce 1.2s ease-out;
+  z-index: 12;
+}
+
+.order-confirmation::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2), transparent 70%),
+              radial-gradient(circle at 80% 80%, rgba(255,235,59,0.15), transparent 70%),
+              radial-gradient(circle at 50% 50%, rgba(76,175,80,0.2), transparent 70%);
+  background-size: 300% 300%;
+  animation: confettiGlow 5s ease infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+/* Headline */
+.order-confirmation h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1b5e20;
+  margin-bottom: 20px;
+  text-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.order-confirmation p {
+  font-size: 1.15rem;
+  color: #444;
+  margin: 10px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.order-confirmation ul {
+  margin: 30px 0 15px;
+  padding: 0;
+  list-style: none;
+  font-size: 1.05rem;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+
+.order-confirmation h4 {
+  font-size: 1.6rem;
+  color: #2e7d32;
+  font-weight: 700;
+  margin-top: 20px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes successGlow {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
+  100% { box-shadow: 0 0 0 20px rgba(76, 175, 80, 0); }
+}
+
+.order-confirmation h3 {
+  animation: successGlow 1.5s ease-out;
+}
+
+
+/* Animation - entrance scale fade */
+@keyframes scaleFadeIn {
+  0% {
+    transform: scale(0.95) translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Badge bounce */
+@keyframes dropBounce {
+  0% {
+    transform: translate(-50%, -40px) scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, 10px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1);
+  }
+}
+
+/* Confetti shimmer */
+@keyframes confettiGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
+/* === Empty Cart Message === */
+.cart-container p {
+  font-size: 28px;
+  color: #999;
+  margin-top: 50px;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .cart-summary {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .place-order-btn {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  .cart-container h2 {
+    font-size: 2rem;
+  }
+
+  .cart-table th,
+  .cart-table td {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* === Empty Cart Container === */
+.empty-cart-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0px;
+  padding: 40px 120px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  animation: popFade 1s ease;
+  max-width: 600px;
+  text-align: center;
+}
+
+/* === Empty Cart Animation === */
+@keyframes popFade {
+  0% {
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === Empty Cart Image === */
+.empty-cart-box img {
+  width: 180px;
+  height: auto;
+  margin-bottom: 20px;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+/* Floating animation for illustration */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* === Empty Message === */
+.empty-cart-box h3 {
+  font-size: 32px;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.empty-cart-box p {
+  font-size: 24px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* === CTA Button === */
+.explore-btn {
+  background: linear-gradient(135deg, #66bb6a, #43a047);
+  color: white;
+  padding: 12px 22px;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.explore-btn:hover {
+  background: linear-gradient(135deg, #388e3c, #2e7d32);
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(67, 160, 71, 0.4);
+}
+
+/* Cart Summary - Aesthetic Design */
+.cart-summary {
+  margin-top: 40px;
+  padding: 25px 30px;
+  background: linear-gradient(135deg, #f6f9fc, #e9eff5);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.cart-summary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cart-summary h3 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.place-order-btn {
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #00c853, #2e7d32);
+  border: none;
+  color: #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 200, 83, 0.4);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.place-order-btn:hover {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  transform: scale(1.05);
+}
+
+/* Optional: Add a glowing ring on focus */
+.place-order-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.2);
+}
+
+/* === Responsive Enhancements for Tablets and Mobile === */
+
+/* Medium screens (tablets) */
+@media (max-width: 1024px) {
+  .cart-container {
+    padding: 30px 20px;
+  }
+
+  .cart-table {
+    font-size: 15px;
+  }
+
+  .cart-summary {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .cart-table th,
+  .cart-table td {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+
+  .place-order-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+/* Small screens (mobile) */
+@media (max-width: 768px) {
+  .cart-container {
+    padding: 20px 15px;
+  }
+
+  .cart-container h2 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .cart-table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .cart-table thead {
+    display: none;
+  }
+
+  .cart-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+  }
+
+  .cart-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .cart-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #2e7d32;
+    flex-basis: 50%;
+  }
+
+  .qty-btn {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+
+  .remove-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .cart-summary {
+    width: 100%;
+    font-size: 18px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .order-confirmation {
+    padding: 30px 20px;
+    border-radius: 40px;
+  }
+
+  .order-confirmation h3 {
+    font-size: 2rem;
+  }
+
+  .order-confirmation p,
+  .order-confirmation ul,
+  .order-confirmation h4 {
+    font-size: 1rem;
+  }
+
+  .empty-cart-box {
+    padding: 30px 20px;
+  }
+
+  .empty-cart-box h3 {
+    font-size: 24px;
+  }
+
+  .empty-cart-box p {
+    font-size: 18px;
+  }
+
+  .explore-btn {
+    width: 100%;
+    font-size: 16px;
+    padding: 12px;
+  }
+}

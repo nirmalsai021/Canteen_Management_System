@@ -1,0 +1,155 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 70px);
+  background-color: #fdfcf9;
+  padding: 0 20px;
+  padding-top: 20px;
+  animation: fadeIn 1.5s ease-in-out;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.overlay-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  background-color: #fdfcf9;
+  padding: 60px;
+  animation: slideUp 1s ease-in-out;
+  overflow: hidden;
+}
+
+/* Text Section */
+.text-section {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.welcome {
+  color: #333;
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 52px;
+  font-weight: 800;
+  color: #d35400;
+  margin-bottom: 20px;
+}
+
+.title span {
+  color: #145A32;
+}
+
+.description {
+  color: #333;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.btn {
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn.green {
+  background-color: #0D4715;
+  color: white;
+}
+
+.btn.green:hover {
+  background-color: #1c5e28;
+}
+
+.btn.orange {
+  background-color: #E9762B;
+  color: white;
+}
+
+.btn.orange:hover {
+  background-color: #cc5f1c;
+}
+
+/* Image Section */
+.image-section {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.lottie-item {
+  width: 180px;
+  height: 180px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .overlay-content {
+    flex-direction: column;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .text-section {
+    padding-right: 0;
+  }
+
+  .image-section {
+    margin-top: 30px;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .lottie-item {
+    width: 150px;
+    height: 150px;
+  }
+}

@@ -1,0 +1,76 @@
+/* src/components/Intro/Intro.css */
+
+.intro-wrapper {
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.intro-content {
+  text-align: center;
+  z-index: 2;
+}
+
+.pizza-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.intro-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #777;
+}
+
+.progress-bar {
+  width: 300px;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  margin: 20px auto;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #43cea2, #185a9d);
+  width: 0%;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-percent {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* Curtain effect */
+.curtain {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: white;
+  z-index: 1;
+}
+
+.curtain-left {
+  left: 0;
+  border-right: 1px solid #ddd;
+}
+
+.curtain-right {
+  right: 0;
+  border-left: 1px solid #ddd;
+}

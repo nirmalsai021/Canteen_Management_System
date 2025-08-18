@@ -1,0 +1,277 @@
+.list-items-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 40px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.table-wrapper {
+  width: 85%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-wrapper h2 {
+  color: #003366;
+  font-size: 24px;
+  margin: 0;
+}
+
+.refresh-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background-color: #0056b3;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
+}
+
+.error-message {
+  text-align: center;
+  padding: 30px;
+  color: #dc3545;
+  font-size: 16px;
+  background-color: #f8d7da;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+thead tr {
+  background-color: #003366;
+  color: white;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 14px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #e6f0ff;
+}
+
+td input, td select, td textarea {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Image styling */
+.menu-item-image-small {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  display: block;
+}
+
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+
+.no-image-placeholder {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 10px;
+  color: #999;
+  text-align: center;
+}
+
+.image-edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.image-input {
+  width: 100%;
+  max-width: 150px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* Adjust table column widths */
+.table-wrapper table th:first-child,
+.table-wrapper table td:first-child {
+  width: 70px;
+  text-align: center;
+}
+
+/* Availability styling */
+.availability {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.availability.in-stock {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.availability.out-of-stock {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Button styling */
+.edit-btn, .delete-btn, .cancel-btn, .complete-btn, .next-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  margin: 4px;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #495057;
+}
+
+.complete-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.complete-btn:hover {
+  background-color: #218838;
+}
+
+.next-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.next-btn:hover {
+  background-color: #0056b3;
+}
+
+.table-wrapper p {
+  text-align: center;
+  font-size: 16px;
+  padding: 30px;
+  color: #555;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .list-items-container {
+    padding: 20px;
+  }
+  
+  .table-wrapper {
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .header-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .menu-item-image-small {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .no-image-placeholder {
+    width: 40px;
+    height: 40px;
+    font-size: 8px;
+  }
+  
+  .table-wrapper table th:first-child,
+  .table-wrapper table td:first-child {
+    width: 60px;
+  }
+  
+  th, td {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .edit-btn, .delete-btn, .cancel-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin: 2px;
+  }
+}

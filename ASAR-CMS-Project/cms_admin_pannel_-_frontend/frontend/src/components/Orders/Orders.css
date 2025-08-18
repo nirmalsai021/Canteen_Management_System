@@ -1,0 +1,210 @@
+/* === Base Container === */
+.orders-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #e3f2fd, #f1f8e9, #fff3e0);
+  background-size: 400% 400%;
+  animation: gradientScroll 15s ease infinite;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+/* === Title === */
+.orders-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 30px;
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* === Refresh Button === */
+.refresh-btn {
+  margin-left: 16px;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+.refresh-btn:hover {
+  background: linear-gradient(135deg, #1e88e5, #1565c0);
+  transform: translateY(-2px);
+}
+
+/* === Table Wrapper === */
+.orders-table-wrapper {
+  overflow-x: auto;
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.3);
+  animation: fadeIn 1s ease;
+}
+
+/* === Table === */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 16px 18px;
+  text-align: left;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.orders-table th {
+  background-color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  color: #1b5e20;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* === Row Hover === */
+.orders-table tbody tr:hover {
+  background-color: rgba(200, 230, 201, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+/* === Order Items List === */
+.order-items-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.order-items-list li {
+  font-size: 0.92rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+/* === Status Badges === */
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.status-placed { background: #e3f2fd; color: #1976d2; }
+.status-confirmed { background: #f3e5f5; color: #7b1fa2; }
+.status-preparing { background: #fff3e0; color: #f57c00; }
+.status-ready { background: #e8f5e9; color: #388e3c; }
+.status-delivered { background: #c8e6c9; color: #2e7d32; }
+.status-cancelled { background: #ffebee; color: #c62828; }
+
+/* === Cancel Button === */
+.cancel-btn {
+  background: linear-gradient(135deg, #e53935, #b71c1c);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b71c1c, #7f0000);
+  transform: scale(1.05);
+}
+
+.cancel-btn:disabled {
+  background: #ffcdd2;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* === No Action Text === */
+.no-action {
+  color: #757575;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* === Loading & Error States === */
+.orders-container p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 60px;
+}
+
+.orders-container p[style*="color: red"] {
+  color: #f44336 !important;
+  background-color: #ffebee;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 6px solid #f44336;
+}
+
+/* === Animations === */
+@keyframes gradientScroll {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 20px 10px;
+  }
+
+  .orders-title {
+    font-size: 2rem;
+  }
+
+  .orders-table {
+    min-width: unset;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .order-items-list li {
+    font-size: 0.8rem;
+  }
+
+  .cancel-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .refresh-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}
+

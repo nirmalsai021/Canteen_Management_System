@@ -1,0 +1,19 @@
+.sidebar {
+  position: sticky;
+  top: 70px; /* below navbar */
+  height: calc(100vh - 70px);
+  width: 150px;
+  background-color: #f0f0f0;
+  padding-top: 20px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  background-color: #ddd;
+}

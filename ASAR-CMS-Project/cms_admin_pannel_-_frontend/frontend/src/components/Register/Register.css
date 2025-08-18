@@ -1,0 +1,169 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #FFF8F0;
+  overflow: hidden;
+}
+
+.register-container {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: row;
+  width: 70vw;              /* ⬅️ Reduced from 90vw */
+  max-width: 900px;         /* ⬅️ Reduced from 1200px */
+  height: 65%;              /* ⬅️ Reduced from 75% */
+  background-color:  #41644A;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  flex-wrap: wrap;
+  margin-left: 300px;
+  
+}
+
+/* Left panel */
+.left-panel {
+  flex: 1;
+  background-color: #41644A;
+  color: white;
+  padding: 30px;             /* ⬅️ Reduced padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px 80px 80px 20px;
+  text-align: center;
+}
+
+.left-panel h2 {
+  font-size: 18px;           /* ⬅️ Slightly reduced */
+  margin-bottom: 16px;
+}
+
+.left-panel p {
+  font-size: 16px;           /* ⬅️ Slightly reduced */
+  margin-bottom: 0;
+}
+
+/* Form */
+.register-form {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #fdfcf9;
+  max-width: 400px;          /* ⬅️ Added max width */
+  margin: 0 auto;            /* ⬅️ Center form section */
+}
+
+.register-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2E2E2E;
+}
+
+.register-form input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #FFF8F0;
+  color: #2E2E2E;
+}
+
+.register-form input::placeholder {
+  color: #6C757D;
+}
+
+.register-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #41644A;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-form button:hover {
+  background-color: #FFD166;
+  color: #2E2E2E;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .register-container {
+    flex-direction: column;
+    width: 95vw;
+    height: auto;
+    border-radius: 20px;
+  }
+
+  .left-panel {
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+  }
+
+  .register-form {
+    border-radius: 0 0 20px 20px;
+    padding: 20px;
+  }
+}
+
+.password-wrapper {
+  position: relative;
+  width: 90%;
+  margin-bottom: 14px;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 12px 40px 12px 12px; /* right space for icon */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #FFF8F0;
+  color: #2E2E2E;
+}
+
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #333;
+}
+
+.password-wrapper {
+  position: relative;
+  margin-bottom: 0px;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 12px 40px 12px 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-60%); /* slightly above center */
+  cursor: pointer;
+  color: #555;
+  font-size: 18px;
+}
