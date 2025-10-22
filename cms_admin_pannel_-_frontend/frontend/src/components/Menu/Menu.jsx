@@ -126,14 +126,14 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
             menuItems.map((item) => (
               <div key={item.id} className="food-card">
                 <img
-  src={item.image?.startsWith('http') ? item.image : `${API_BASE}${item.image}`}
-  alt={item.name}
-  className="food-image"
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = '/no-image.png';
-  }}
-/>
+                  src={item.image ? (item.image.startsWith('http') ? item.image : `${API_BASE}${item.image}`) : '/no-image.svg'}
+                  alt={item.name}
+                  className="food-image"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/no-image.svg';
+                  }}
+                />
                 <h3>{item.name}</h3>
                 <p>₹{parseFloat(item.price || 0).toFixed(2)}</p>
                 <div className="cart-controls">
