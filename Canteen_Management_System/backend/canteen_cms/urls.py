@@ -4,14 +4,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
-from users.views import simple_admin_login
+from admin_login import bulletproof_admin_login
 
 urlpatterns = [
     # Admin interface
     path('admin/', admin.site.urls),
     
     # Direct admin login (bypass middleware issues)
-    path('api/users/admin/login/', simple_admin_login, name='direct_admin_login'),
+    path('api/users/admin/login/', bulletproof_admin_login, name='bulletproof_admin_login'),
     
     # API endpoints
     path('api/users/', include('users.urls')),
