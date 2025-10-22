@@ -8,7 +8,7 @@ const Login = ({ setIsLoggedIn }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -92,34 +92,15 @@ const Login = ({ setIsLoggedIn }) => {
           required
           disabled={isLoading}
         />
-        <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Password"
-            name="password"
-            value={credentials.password}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-            style={{ paddingRight: '40px', width: '100%' }}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: 'absolute',
-              right: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            {showPassword ? '🙈' : '👁️'}
-          </button>
-        </div>
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          value={credentials.password}
+          onChange={handleChange}
+          required
+          disabled={isLoading}
+        />
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
