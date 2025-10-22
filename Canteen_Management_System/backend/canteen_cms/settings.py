@@ -58,8 +58,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://your-frontend-domain.vercel.app",  # Add your Vercel domain
-    "https://your-admin-domain.vercel.app",     # Add your admin domain
+    "https://canteen-management-system-coral.vercel.app",  # Customer frontend
+    "https://canteen-management-system-lo73.vercel.app",   # Admin panel
 ]
 
 # For development only - you can use this instead of CORS_ALLOWED_ORIGINS
