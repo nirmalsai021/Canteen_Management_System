@@ -4,7 +4,7 @@ from .views import (
     # Authentication
     UserRegisterView, AdminRegisterView,
     CustomTokenObtainPairView, AdminTokenObtainPairView,
-    LogoutView,
+    LogoutView, simple_admin_login,
     
     # Profiles
     CustomerProfileView, AdminProfileView,
@@ -26,11 +26,11 @@ urlpatterns = [
     
     # Registration
     path('register/', UserRegisterView.as_view(), name='user_register'),
-    path('admin/register/', AdminRegisterView.as_view(), name='admin_register'),
+    # path('admin/register/', AdminRegisterView.as_view(), name='admin_register'),  # Disabled - using predefined admin
     
     # Login
     path('login/', CustomTokenObtainPairView.as_view(), name='user_login'),
-    path('admin/login/', AdminTokenObtainPairView.as_view(), name='admin_login'),
+    path('admin/login/', simple_admin_login, name='admin_login'),  # Simple JSON-only login
     
     # Logout
     path('logout/', LogoutView.as_view(), name='logout'),
