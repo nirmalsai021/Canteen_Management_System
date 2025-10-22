@@ -18,9 +18,11 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     { display: 'Juices',    value: 'juices'    },
   ];
 
-  const getAdminToken = () =>
-    localStorage.getItem('admin_access_token') ||
-    localStorage.getItem('access_token');
+  const getAdminToken = () => {
+    const token = localStorage.getItem('admin_access_token') || localStorage.getItem('access_token');
+    console.log('ListItems - Retrieved admin token:', token);
+    return token;
+  };
 
   /* ─────────── Data fetch ─────────── */
   const fetchMenuItems = async () => {
@@ -34,6 +36,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         return;
       }
 
+      console.log('Fetching menu items with token:', token);
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
         headers: { Authorization: `Bearer ${token}` },
       });

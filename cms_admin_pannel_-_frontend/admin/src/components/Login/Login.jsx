@@ -56,6 +56,12 @@ const Login = ({ setIsLoggedIn }) => {
         // Set logged in state
         setIsLoggedIn(true);
         
+        // Verify token was stored
+        setTimeout(() => {
+          const storedToken = localStorage.getItem('admin_access_token');
+          console.log('Verification - stored token:', storedToken);
+        }, 100);
+        
         alert('✅ Login successful! Welcome Admin User');
       } else {
         // Handle error response

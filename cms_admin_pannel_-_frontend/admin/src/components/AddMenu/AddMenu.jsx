@@ -27,7 +27,9 @@ const AddMenu = ({ onAddMenuItem }) => {
 
   // Get admin token - check both possible token names
   const getAdminToken = () => {
-    return localStorage.getItem('admin_access_token') || localStorage.getItem('access_token');
+    const token = localStorage.getItem('admin_access_token') || localStorage.getItem('access_token');
+    console.log('Retrieved admin token:', token);
+    return token;
   };
 
   const handleChange = (e) => {
