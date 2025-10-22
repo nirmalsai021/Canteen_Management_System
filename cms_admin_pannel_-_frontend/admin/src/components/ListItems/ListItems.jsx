@@ -34,7 +34,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         return;
       }
 
-      const res = await fetch('http://localhost:8000/api/menu/admin/', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -115,7 +115,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/menu/admin/${menuItems[editIndex].id}/`,
+        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/${menuItems[editIndex].id}/`,
         {
           method: 'PUT',                       // DRF-friendly
           headers: {
@@ -164,7 +164,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/menu/admin/${menuItems[index].id}/`,
+        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/${menuItems[index].id}/`,
         { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -190,7 +190,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     if (!path) return null;
     return path.startsWith('http')
       ? path
-      : `http://localhost:8000${path.startsWith('/') ? '' : '/'}${path}`;
+      : `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}${path.startsWith('/') ? '' : '/'}${path}`;
   };
 
   /* ─────────── Render ─────────── */

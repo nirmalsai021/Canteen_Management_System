@@ -78,6 +78,7 @@ const AddMenu = ({ onAddMenuItem }) => {
     try {
       // FIXED: Use the helper function to get admin token
       const token = getAdminToken();
+      console.log('Using admin token:', token);
       
       if (!token) {
         throw new Error('Admin authentication required. Please login again.');

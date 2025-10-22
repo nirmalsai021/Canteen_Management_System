@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Components
@@ -10,7 +10,9 @@ import ListItems from './components/ListItems/ListItems';
 import Orders from './components/Orders/Orders';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem('admin_access_token');
+  });
   const [menuItems, setMenuItems] = useState([]);
 
   // CRUD operations for menu

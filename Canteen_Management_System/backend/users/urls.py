@@ -30,6 +30,7 @@ urlpatterns = [
     # Login
     path('login/', CustomTokenObtainPairView.as_view(), name='user_login'),
     path('admin/login/', simple_admin_login, name='admin_login'),  # Simple JSON-only login
+    path('simple-admin-login/', simple_admin_login, name='simple_admin_login'),  # Alternative endpoint
     
     # Logout
     path('logout/', LogoutView.as_view(), name='logout'),

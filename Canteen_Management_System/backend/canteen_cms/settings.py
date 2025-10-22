@@ -5,7 +5,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-23c-w_jq#pvxfjg-ky8^ae8gd$&9w=tm@+bs@hmizp!oep&$%9'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-23c-w_jq#pvxfjg-ky8^ae8gd$&9w=tm@+bs@hmizp!oep&$%9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
@@ -54,17 +54,16 @@ MIDDLEWARE = [
 
 # ===================== CORS SETTINGS =====================
 # Allow all origins for now (can be restricted later)
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('DEBUG', 'True') == 'True'
 
 # Specific origins (use this in production)
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "https://canteen-management-system-coral.vercel.app",
-#     "https://canteen-management-system-lo73.vercel.app",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://canteen-management-system-coral.vercel.app",
+    "https://canteen-management-system-lo73.vercel.app",
+    "https://canteen-admin-panel.vercel.app",
+]
 
 # Allow credentials to be included in CORS requests
 CORS_ALLOW_CREDENTIALS = True
