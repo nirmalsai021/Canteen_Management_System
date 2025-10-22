@@ -64,10 +64,10 @@ class UserRegisterView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 class AdminRegisterView(generics.CreateAPIView):
-    """Registration for admin users - only accessible by superuser"""
+    """Registration for admin users"""
     queryset = User.objects.all()
     serializer_class = AdminRegistrationSerializer
-    permission_classes = [IsAdminUser]  # Only admin can create admin users
+    permission_classes = [AllowAny]  # Allow anyone to register as admin
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
