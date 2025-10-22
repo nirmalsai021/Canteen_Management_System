@@ -220,7 +220,11 @@ def simple_admin_login(request):
         return JsonResponse({"error": "Only POST method allowed"}, status=405)
     
     try:
-        data = json.loads(request.body.decode('utf-8'))
+        body = request.body.decode('utf-8')
+        if not body:
+            return JsonResponse({"error": "Empty request body"}, status=400)
+            
+        data = json.loads(body)
         username = data.get('username')
         password = data.get('password')
         
@@ -239,10 +243,10 @@ def simple_admin_login(request):
                 "message": "Login successful"
             })
         else:
-            return JsonResponse({"error": "Invalid credentials. Use canteen/canteen@321"}, status=400)
+            return JsonResponse({"error": "Invalid credentials"}, status=401)
             
     except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        return JsonResponse({"error": "Invalid JSON format"}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 

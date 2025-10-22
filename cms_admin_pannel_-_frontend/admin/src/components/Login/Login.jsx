@@ -34,15 +34,7 @@ const Login = ({ setIsLoggedIn }) => {
         }),
       });
 
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-      
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
-      }
+      const data = await response.json();
 
       if (response.ok) {
         // Store tokens and user data in localStorage

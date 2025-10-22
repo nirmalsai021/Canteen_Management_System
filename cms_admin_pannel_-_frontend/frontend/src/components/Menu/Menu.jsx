@@ -9,7 +9,7 @@ import easyLunch from './easy.jpg';
 import drinks from './drinks.jpeg';
 import snacks from './snacks.jpg';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 // ✅ Helper to read search query
 const useQuery = () => new URLSearchParams(useLocation().search);
