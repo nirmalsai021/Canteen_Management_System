@@ -210,32 +210,42 @@ def check_username_availability(request):
         "is_available": is_available
     })
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
 def simple_admin_login(request):
-    """Hardcoded admin login - only canteen/canteen@321"""
-    username = request.data.get('username')
-    password = request.data.get('password')
+    """Bulletproof admin login - always returns JSON"""
+    if request.method != 'POST':
+        return JsonResponse({"error": "Only POST method allowed"}, status=405)
     
-    # Only allow these exact credentials
-    if username == 'canteen' and password == 'canteen@321':
-        return Response({
-            "access": "admin-token-12345",
-            "refresh": "admin-refresh-12345", 
-            "user": {
-                "id": 1,
-                "username": "canteen",
-                "email": "canteen@example.com",
-                "first_name": "Admin",
-                "last_name": "User"
-            },
-            "user_type": "admin",
-            "message": "Login successful"
-        }, status=status.HTTP_200_OK)
-    else:
-        return Response({
-            "error": "Invalid credentials. Use canteen/canteen@321"
-        }, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        
+        if username == 'canteen' and password == 'canteen@321':
+            return JsonResponse({
+                "access": "admin-token-12345",
+                "refresh": "admin-refresh-12345", 
+                "user": {
+                    "id": 1,
+                    "username": "canteen",
+                    "email": "canteen@example.com",
+                    "first_name": "Admin",
+                    "last_name": "User"
+                },
+                "user_type": "admin",
+                "message": "Login successful"
+            })
+        else:
+            return JsonResponse({"error": "Invalid credentials. Use canteen/canteen@321"}, status=400)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 # =============================================================================
 # LEGACY TOKEN AUTH (if needed for backwards compatibility)

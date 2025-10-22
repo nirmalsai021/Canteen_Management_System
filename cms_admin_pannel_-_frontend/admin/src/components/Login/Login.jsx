@@ -8,6 +8,7 @@ const Login = ({ setIsLoggedIn }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -33,7 +34,15 @@ const Login = ({ setIsLoggedIn }) => {
         }),
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
+      }
 
       if (response.ok) {
         // Store tokens and user data in localStorage
@@ -83,15 +92,34 @@ const Login = ({ setIsLoggedIn }) => {
           required
           disabled={isLoading}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          name="password"
-          value={credentials.password}
-          onChange={handleChange}
-          required
-          disabled={isLoading}
-        />
+        <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            name="password"
+            value={credentials.password}
+            onChange={handleChange}
+            required
+            disabled={isLoading}
+            style={{ paddingRight: '40px', width: '100%' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </button>
+        </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
