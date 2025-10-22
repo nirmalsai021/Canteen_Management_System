@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-23c-w_jq#pvxfjg-ky8^ae8gd$&9w=tm@+bs@hmizp!oep&$%9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost,canteen-backend-bbqk.onrender.com').split(',')
 
 
 # ===================== INSTALLED APPS =====================
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Add this at the top
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,18 +53,18 @@ MIDDLEWARE = [
 ]
 
 # ===================== CORS SETTINGS =====================
-# Allow requests from your React development server
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://canteen-management-system-coral.vercel.app",  # Customer frontend
-    "https://canteen-management-system-lo73.vercel.app",   # Admin panel
-]
+# Allow all origins for now (can be restricted later)
+CORS_ALLOW_ALL_ORIGINS = True
 
-# For development only - you can use this instead of CORS_ALLOWED_ORIGINS
-# CORS_ALLOW_ALL_ORIGINS = True  # WARNING: Only use in development!
+# Specific origins (use this in production)
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "https://canteen-management-system-coral.vercel.app",
+#     "https://canteen-management-system-lo73.vercel.app",
+# ]
 
 # Allow credentials to be included in CORS requests
 CORS_ALLOW_CREDENTIALS = True
@@ -127,6 +128,7 @@ USE_TZ = True
 
 # ===================== STATIC / MEDIA FILES =====================
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

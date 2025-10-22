@@ -21,7 +21,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
       }
 
       // Call logout API
-      const response = await fetch('http://localhost:8000/api/users/logout/', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/logout/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

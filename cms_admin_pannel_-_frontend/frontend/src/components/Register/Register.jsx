@@ -33,7 +33,7 @@ const Register = ({ setUserEmail }) => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
