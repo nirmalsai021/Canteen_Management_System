@@ -104,7 +104,7 @@ const AddMenu = ({ onAddMenuItem }) => {
         formData.append('category', menuItem.category);
         formData.append('image', image);
 
-        response = await fetch('http://localhost:8000/api/menu/admin/', {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -122,7 +122,7 @@ const AddMenu = ({ onAddMenuItem }) => {
           category: menuItem.category
         };
 
-        response = await fetch('http://localhost:8000/api/menu/admin/', {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

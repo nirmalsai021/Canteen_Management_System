@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-23c-w_jq#pvxfjg-ky8^ae8gd$&9w=tm@+bs@hmizp!oep&$%9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Added these for better compatibility
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # ===================== INSTALLED APPS =====================
@@ -54,11 +54,12 @@ MIDDLEWARE = [
 # ===================== CORS SETTINGS =====================
 # Allow requests from your React development server
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite default port
-    "http://127.0.0.1:5173",  # Alternative
-    "http://127.0.0.1:5174",  # Alternative
-    "http://localhost:3000",  # Create React App default port
-    "http://127.0.0.1:3000",  # Alternative
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://your-frontend-domain.vercel.app",  # Add your Vercel domain
+    "https://your-admin-domain.vercel.app",     # Add your admin domain
 ]
 
 # For development only - you can use this instead of CORS_ALLOWED_ORIGINS
