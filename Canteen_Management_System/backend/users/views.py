@@ -20,6 +20,9 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # =============================================================================
 # AUTHENTICATION VIEWS (Both Admin & User)
@@ -210,10 +213,6 @@ def check_username_availability(request):
         "is_available": is_available
     })
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-
 @csrf_exempt
 def simple_admin_login(request):
     """Bulletproof admin login - always returns JSON"""
@@ -221,7 +220,7 @@ def simple_admin_login(request):
         return JsonResponse({"error": "Only POST method allowed"}, status=405)
     
     try:
-        data = json.loads(request.body)
+        data = json.loads(request.body.decode('utf-8'))
         username = data.get('username')
         password = data.get('password')
         
