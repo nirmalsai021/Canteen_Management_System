@@ -11,7 +11,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     
     try {
       // Get tokens from localStorage
-      const accessToken = localStorage.getItem('ADMIN_TOKEN');
+      const accessToken = localStorage.getItem('adminToken');
       const refreshToken = localStorage.getItem('refresh_token');
       
       if (!accessToken || !refreshToken) {
@@ -53,8 +53,8 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   const performClientSideLogout = () => {
-    // Clear all stored data with consistent keys
-    localStorage.clear();
+    // Clear admin token
+    localStorage.removeItem('adminToken');
     
     // Update login state
     setIsLoggedIn(false);

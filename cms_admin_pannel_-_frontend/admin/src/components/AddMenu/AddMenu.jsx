@@ -27,10 +27,9 @@ const AddMenu = ({ onAddMenuItem }) => {
 
   // Get admin token with consistent key
   const getAdminToken = () => {
-    const token = localStorage.getItem('ADMIN_TOKEN');
-    const isLoggedIn = localStorage.getItem('ADMIN_LOGGED_IN') === 'true';
-    console.log('AddMenu - Token:', token, 'Logged in:', isLoggedIn);
-    return isLoggedIn ? token : null;
+    const token = localStorage.getItem('adminToken');
+    console.log('AddMenu - Token:', token);
+    return token;
   };
 
   const handleChange = (e) => {

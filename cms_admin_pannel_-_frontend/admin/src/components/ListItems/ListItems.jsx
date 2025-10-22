@@ -19,10 +19,9 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   ];
 
   const getAdminToken = () => {
-    const token = localStorage.getItem('ADMIN_TOKEN');
-    const isLoggedIn = localStorage.getItem('ADMIN_LOGGED_IN') === 'true';
-    console.log('ListItems - Token:', token, 'Logged in:', isLoggedIn);
-    return isLoggedIn ? token : null;
+    const token = localStorage.getItem('adminToken');
+    console.log('ListItems - Token:', token);
+    return token;
   };
 
   /* ─────────── Data fetch ─────────── */

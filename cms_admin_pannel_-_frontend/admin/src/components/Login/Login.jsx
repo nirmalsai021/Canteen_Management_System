@@ -21,14 +21,16 @@ const Login = ({ setIsLoggedIn }) => {
 
     // Simple hardcoded admin login
     if (credentials.username === 'canteen' && credentials.password === 'canteen@321') {
-      // Store admin token persistently
       const adminToken = 'admin-token-12345';
       
-      // Store with consistent key
-      localStorage.setItem('ADMIN_TOKEN', adminToken);
-      localStorage.setItem('ADMIN_LOGGED_IN', 'true');
+      // Store with single consistent key
+      localStorage.setItem('adminToken', adminToken);
       
       console.log('✅ Admin token stored:', adminToken);
+      
+      // Verify storage immediately
+      const storedToken = localStorage.getItem('adminToken');
+      console.log('✅ Verification - token retrieved:', storedToken);
       
       // Set logged in state
       setIsLoggedIn(true);
