@@ -80,7 +80,6 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
         {!isLoggedIn ? (
           <>
             <Link to="/login" className="nav-btn">Login</Link>
-            <Link to="/register" className="nav-btn">Register</Link>
           </>
         ) : (
           <button 

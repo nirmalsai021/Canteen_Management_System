@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Components
 import Navbar from './components/Navbar/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
-import Register from './components/Register/Register';
 import Login from './components/Login/Login';
 import AddMenu from './components/AddMenu/AddMenu';
 import ListItems from './components/ListItems/ListItems';
@@ -42,7 +41,6 @@ function App() {
             {/* Public Routes */}
             {!isLoggedIn && (
               <>
-                <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
                 <Route path="*" element={<Navigate to="/login" />} />
               </>

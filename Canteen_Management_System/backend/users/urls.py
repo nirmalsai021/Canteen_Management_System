@@ -26,7 +26,6 @@ urlpatterns = [
     
     # Registration
     path('register/', UserRegisterView.as_view(), name='user_register'),
-    # path('admin/register/', AdminRegisterView.as_view(), name='admin_register'),  # Disabled - using predefined admin
     
     # Login
     path('login/', CustomTokenObtainPairView.as_view(), name='user_login'),
