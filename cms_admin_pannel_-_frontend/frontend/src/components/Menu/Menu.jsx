@@ -133,6 +133,7 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
                     e.target.onerror = null;
                     e.target.src = '/no-image.svg';
                   }}
+                  onLoad={() => console.log('Image loaded:', item.image)}
                 />
                 <h3>{item.name}</h3>
                 <p>₹{parseFloat(item.price || 0).toFixed(2)}</p>

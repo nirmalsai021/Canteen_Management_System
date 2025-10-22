@@ -112,7 +112,7 @@ def search_menu(request):
 class MenuItemListCreateView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrSimpleToken]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'available']
     search_fields = ['name', 'description']
@@ -120,7 +120,7 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
 class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrSimpleToken]
 
 # Function-based views (for backward compatibility)
 @api_view(['GET'])

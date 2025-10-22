@@ -21,31 +21,19 @@ const Login = ({ setIsLoggedIn }) => {
 
     // Simple hardcoded admin login
     if (credentials.username === 'canteen' && credentials.password === 'canteen@321') {
-      try {
-        // Store admin token persistently
-        const adminToken = 'admin-token-12345';
-        
-        // Clear localStorage first
-        localStorage.clear();
-        
-        // Store with consistent key
-        localStorage.setItem('ADMIN_TOKEN', adminToken);
-        localStorage.setItem('ADMIN_LOGGED_IN', 'true');
-        localStorage.setItem('ADMIN_USER', JSON.stringify({
-          username: 'canteen',
-          role: 'admin'
-        }));
-        
-        console.log('✅ Admin token stored:', adminToken);
-        
-        // Set logged in state
-        setIsLoggedIn(true);
-        
-        alert('✅ Login successful! Welcome Admin');
-      } catch (err) {
-        console.error('Storage error:', err);
-        setError('Failed to store login data');
-      }
+      // Store admin token persistently
+      const adminToken = 'admin-token-12345';
+      
+      // Store with consistent key
+      localStorage.setItem('ADMIN_TOKEN', adminToken);
+      localStorage.setItem('ADMIN_LOGGED_IN', 'true');
+      
+      console.log('✅ Admin token stored:', adminToken);
+      
+      // Set logged in state
+      setIsLoggedIn(true);
+      
+      alert('✅ Login successful! Welcome Admin');
     } else {
       setError('Invalid credentials. Use: canteen / canteen@321');
     }
