@@ -11,7 +11,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     
     try {
       // Get tokens from localStorage
-      const accessToken = localStorage.getItem('admin_access_token') || localStorage.getItem('access_token');
+      const accessToken = localStorage.getItem('ADMIN_TOKEN');
       const refreshToken = localStorage.getItem('refresh_token');
       
       if (!accessToken || !refreshToken) {
@@ -53,13 +53,8 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   const performClientSideLogout = () => {
-    // Clear all stored data
-    localStorage.removeItem('admin_access_token');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_data');
-    localStorage.removeItem('user_type');
-    localStorage.removeItem('admin_profile');
+    // Clear all stored data with consistent keys
+    localStorage.clear();
     
     // Update login state
     setIsLoggedIn(false);
@@ -67,8 +62,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     // Navigate to login page
     navigate('/login');
     
-    // Optional: reload to reset everything
-    window.location.reload();
+    console.log('✅ Admin logged out successfully');
   };
 
 

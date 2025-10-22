@@ -9,10 +9,8 @@ const Login = ({ setIsLoggedIn }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -21,79 +19,46 @@ const Login = ({ setIsLoggedIn }) => {
     setIsLoading(true);
     setError('');
 
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/simple-admin-login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          username: credentials.username,
-          password: credentials.password,
-        }),
-      });
-      
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
-      const data = await response.json();
-      console.log('Login response data:', data);
-
-      if (response.ok) {
-        // Store the hardcoded admin token
+    // Simple hardcoded admin login
+    if (credentials.username === 'canteen' && credentials.password === 'canteen@321') {
+      try {
+        // Store admin token persistently
         const adminToken = 'admin-token-12345';
-        console.log('Storing admin token:', adminToken);
         
-        // Clear any existing tokens first
+        // Clear localStorage first
         localStorage.clear();
         
-        // Store tokens with multiple keys for compatibility
-        localStorage.setItem('admin_access_token', adminToken);
-        localStorage.setItem('access_token', adminToken);
-        localStorage.setItem('adminToken', adminToken);
-        localStorage.setItem('user_type', 'admin');
-        localStorage.setItem('isAdminLoggedIn', 'true');
-        localStorage.setItem('user_data', JSON.stringify({
+        // Store with consistent key
+        localStorage.setItem('ADMIN_TOKEN', adminToken);
+        localStorage.setItem('ADMIN_LOGGED_IN', 'true');
+        localStorage.setItem('ADMIN_USER', JSON.stringify({
           username: 'canteen',
-          first_name: 'Admin',
-          last_name: 'User'
+          role: 'admin'
         }));
-
+        
+        console.log('✅ Admin token stored:', adminToken);
+        
         // Set logged in state
         setIsLoggedIn(true);
         
-        // Verify token was stored
-        setTimeout(() => {
-          const storedToken = localStorage.getItem('admin_access_token');
-          console.log('Verification - stored token:', storedToken);
-          console.log('All localStorage keys:', Object.keys(localStorage));
-        }, 100);
-        
-        alert('✅ Login successful! Welcome Admin User');
-      } else {
-        // Handle error response
-        if (data.error) {
-          setError(data.error);
-        } else if (data.non_field_errors) {
-          setError(data.non_field_errors[0]);
-        } else if (data.detail) {
-          setError(data.detail);
-        } else {
-          setError('Invalid credentials. Please try again.');
-        }
+        alert('✅ Login successful! Welcome Admin');
+      } catch (err) {
+        console.error('Storage error:', err);
+        setError('Failed to store login data');
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      setError('Network error. Please check your connection and try again.');
-    } finally {
-      setIsLoading(false);
+    } else {
+      setError('Invalid credentials. Use: canteen / canteen@321');
     }
+    
+    setIsLoading(false);
   };
 
   return (
     <div className="form-container">
       <h2>Admin Login</h2>
+      <div style={{marginBottom: '10px', fontSize: '14px', color: '#666'}}>
+        Username: canteen | Password: canteen@321
+      </div>
       {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
         <input

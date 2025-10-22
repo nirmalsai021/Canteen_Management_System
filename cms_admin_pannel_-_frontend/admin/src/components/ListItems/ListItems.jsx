@@ -19,12 +19,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   ];
 
   const getAdminToken = () => {
-    const token = localStorage.getItem('admin_access_token') || 
-                  localStorage.getItem('adminToken') || 
-                  localStorage.getItem('access_token');
-    console.log('ListItems - Retrieved admin token:', token);
-    console.log('ListItems - localStorage keys:', Object.keys(localStorage));
-    return token;
+    const token = localStorage.getItem('ADMIN_TOKEN');
+    const isLoggedIn = localStorage.getItem('ADMIN_LOGGED_IN') === 'true';
+    console.log('ListItems - Token:', token, 'Logged in:', isLoggedIn);
+    return isLoggedIn ? token : null;
   };
 
   /* ─────────── Data fetch ─────────── */

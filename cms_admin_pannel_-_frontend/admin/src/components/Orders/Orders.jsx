@@ -7,9 +7,10 @@ const Orders = () => {
   const [error, setError] = useState('');
 
   const getAdminToken = () => {
-    return localStorage.getItem('admin_access_token') || 
-           localStorage.getItem('adminToken') || 
-           localStorage.getItem('access_token');
+    const token = localStorage.getItem('ADMIN_TOKEN');
+    const isLoggedIn = localStorage.getItem('ADMIN_LOGGED_IN') === 'true';
+    console.log('Orders - Token:', token, 'Logged in:', isLoggedIn);
+    return isLoggedIn ? token : null;
   };
 
   const fetchOrders = async () => {
