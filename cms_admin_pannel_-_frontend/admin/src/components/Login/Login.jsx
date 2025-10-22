@@ -44,9 +44,16 @@ const Login = ({ setIsLoggedIn }) => {
         // Store the hardcoded admin token
         const adminToken = 'admin-token-12345';
         console.log('Storing admin token:', adminToken);
+        
+        // Clear any existing tokens first
+        localStorage.clear();
+        
+        // Store tokens with multiple keys for compatibility
         localStorage.setItem('admin_access_token', adminToken);
         localStorage.setItem('access_token', adminToken);
+        localStorage.setItem('adminToken', adminToken);
         localStorage.setItem('user_type', 'admin');
+        localStorage.setItem('isAdminLoggedIn', 'true');
         localStorage.setItem('user_data', JSON.stringify({
           username: 'canteen',
           first_name: 'Admin',
@@ -60,6 +67,7 @@ const Login = ({ setIsLoggedIn }) => {
         setTimeout(() => {
           const storedToken = localStorage.getItem('admin_access_token');
           console.log('Verification - stored token:', storedToken);
+          console.log('All localStorage keys:', Object.keys(localStorage));
         }, 100);
         
         alert('✅ Login successful! Welcome Admin User');

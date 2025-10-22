@@ -11,7 +11,10 @@ import Orders from './components/Orders/Orders';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!localStorage.getItem('admin_access_token');
+    const adminToken = localStorage.getItem('admin_access_token') || localStorage.getItem('adminToken');
+    const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+    console.log('App init - admin token:', adminToken, 'logged in:', isAdminLoggedIn);
+    return !!(adminToken && isAdminLoggedIn);
   });
   const [menuItems, setMenuItems] = useState([]);
 

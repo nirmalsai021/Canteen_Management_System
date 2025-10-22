@@ -19,8 +19,11 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   ];
 
   const getAdminToken = () => {
-    const token = localStorage.getItem('admin_access_token') || localStorage.getItem('access_token');
+    const token = localStorage.getItem('admin_access_token') || 
+                  localStorage.getItem('adminToken') || 
+                  localStorage.getItem('access_token');
     console.log('ListItems - Retrieved admin token:', token);
+    console.log('ListItems - localStorage keys:', Object.keys(localStorage));
     return token;
   };
 
