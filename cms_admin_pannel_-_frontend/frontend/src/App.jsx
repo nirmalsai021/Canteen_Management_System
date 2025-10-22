@@ -166,7 +166,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   ) : (
     <>
       <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} cart={cart} />
-      <div className="app-container">
+      <div className="app-container" style={{ touchAction: 'pan-y' }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
@@ -205,6 +205,15 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return !!localStorage.getItem('access_token');
   });
+
+  // ✅ Prevent zoom on iOS double-tap
+  useEffect(() => {
+    const preventDefault = (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    };
+    document.addEventListener('touchstart', preventDefault, { passive: false });
+    return () => document.removeEventListener('touchstart', preventDefault);
+  }, []);
 
   return (
     <Router>
