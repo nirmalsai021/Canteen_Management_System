@@ -23,7 +23,16 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/users/admin/register/', formData);
+      await axios.post(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/admin/register/`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        }
+      );
       
       // If successful
       alert('✅ Registered successfully!');
