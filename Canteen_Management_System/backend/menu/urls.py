@@ -13,6 +13,9 @@ urlpatterns = [
     # Admin menu endpoints
     path('admin/', views.MenuItemListCreateView.as_view(), name='admin-menu-list-create'),
     path('admin/<int:pk>/', views.MenuItemDetailView.as_view(), name='admin-menu-detail'),
+
+    # RESTful detail endpoint for admin operations (GET, PUT, DELETE)
+    path('<int:pk>/', views.MenuItemDetailView.as_view(), name='menu-detail'),
     
     # Legacy endpoints (for backward compatibility)
     path('', views.list_items, name='list-items'),

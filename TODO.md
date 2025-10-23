@@ -1,0 +1,13 @@
+# TODO: Fix 404 Errors by Making API RESTful
+
+## Backend Changes
+- [x] Update `Canteen_Management_System/backend/menu/urls.py` to add RESTful detail endpoint `path('<int:pk>/', views.MenuItemDetailView.as_view(), name='menu-detail')`
+
+## Frontend Changes
+- [x] Update `cms_admin_pannel_-_frontend/admin/src/components/ListItems/ListItems.jsx` to change update fetch URL from `/api/menu/${itemId}/update/` to `/api/menu/${itemId}/` (keep PUT method)
+- [x] Update `cms_admin_pannel_-_frontend/admin/src/components/ListItems/ListItems.jsx` to change delete fetch URL from `/api/menu/${itemId}/delete/` to `/api/menu/${itemId}/` (keep DELETE method)
+
+## Testing
+- [ ] Run backend server and frontend admin panel
+- [ ] Verify update and delete operations work without 404 errors
+- [ ] Ensure no conflicts with existing endpoints

@@ -112,10 +112,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/update/`,
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
         {
           method: 'PUT',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Token ${token}` })
           },
@@ -157,7 +157,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
         { method: 'DELETE', headers }
       );
       
