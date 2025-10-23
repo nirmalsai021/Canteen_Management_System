@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { tokenUtils } from '../../utils/tokenUtils';
 
 const Login = ({ setIsLoggedIn }) => {
   const [credentials, setCredentials] = useState({
@@ -19,25 +20,29 @@ const Login = ({ setIsLoggedIn }) => {
     setIsLoading(true);
     setError('');
 
-    // Simple hardcoded admin login
-    if (credentials.username === 'canteen' && credentials.password === 'canteen@321') {
-      const adminToken = 'admin-token-12345';
-      
-      // Store with single consistent key
-      localStorage.setItem('adminToken', adminToken);
-      
-      console.log('✅ Admin token stored:', adminToken);
-      
-      // Verify storage immediately
-      const storedToken = localStorage.getItem('adminToken');
-      console.log('✅ Verification - token retrieved:', storedToken);
-      
-      // Set logged in state
-      setIsLoggedIn(true);
-      
-      alert('✅ Login successful! Welcome Admin');
-    } else {
-      setError('Invalid credentials. Use: canteen / canteen@321');
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/admin/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login response:', data);
+        const token = data.access || data.token;
+        tokenUtils.setToken(token);
+        console.log('Token stored:', token);
+        setIsLoggedIn(true);
+        alert('✅ Login successful! Welcome Admin');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.error || 'Invalid credentials. Use: canteen / canteen@321');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection.');
     }
     
     setIsLoading(false);

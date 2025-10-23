@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AddMenu.css';
+import { tokenUtils } from '../../utils/tokenUtils';
 
 const AddMenu = ({ onAddMenuItem }) => {
   const [menuItem, setMenuItem] = useState({
@@ -25,11 +26,9 @@ const AddMenu = ({ onAddMenuItem }) => {
 ];
 
 
-  // Get admin token with consistent key
+  // Get admin token using centralized utility
   const getAdminToken = () => {
-    const token = localStorage.getItem('adminToken');
-    console.log('AddMenu - Token:', token);
-    return token;
+    return tokenUtils.getToken();
   };
 
   const handleChange = (e) => {
@@ -80,7 +79,6 @@ const AddMenu = ({ onAddMenuItem }) => {
     try {
       // FIXED: Use the helper function to get admin token
       const token = getAdminToken();
-      console.log('Using admin token:', token);
       
       if (!token) {
         throw new Error('Admin authentication required. Please login again.');
@@ -97,6 +95,11 @@ const AddMenu = ({ onAddMenuItem }) => {
 
       let response;
 
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       if (image) {
         // Use FormData for image upload
         const formData = new FormData();
@@ -107,12 +110,9 @@ const AddMenu = ({ onAddMenuItem }) => {
         formData.append('category', menuItem.category);
         formData.append('image', image);
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/add/`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-            // Don't set Content-Type for FormData, let browser set it
-          },
+          headers,
           body: formData
         });
       } else {
@@ -125,11 +125,11 @@ const AddMenu = ({ onAddMenuItem }) => {
           category: menuItem.category
         };
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/add/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            ...headers
           },
           body: JSON.stringify(payload)
         });
@@ -138,10 +138,6 @@ const AddMenu = ({ onAddMenuItem }) => {
       if (!response.ok) {
         // Handle different error types
         if (response.status === 401) {
-          // Clear tokens if unauthorized
-          localStorage.removeItem('admin_access_token');
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
           throw new Error('Unauthorized. Please login again.');
         } else if (response.status === 403) {
           throw new Error('Forbidden. Admin access required.');
@@ -191,7 +187,6 @@ const AddMenu = ({ onAddMenuItem }) => {
       }
 
     } catch (err) {
-      console.error('Error adding menu item:', err);
       setError(err.message);
     } finally {
       setLoading(false);

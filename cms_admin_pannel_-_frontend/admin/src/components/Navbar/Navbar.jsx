@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
+import { tokenUtils } from '../../utils/tokenUtils';
 
 const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     
     try {
       // Get tokens from localStorage
-      const accessToken = localStorage.getItem('adminToken');
+      const accessToken = tokenUtils.getToken();
       const refreshToken = localStorage.getItem('refresh_token');
       
       if (!accessToken || !refreshToken) {
@@ -53,8 +54,8 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   const performClientSideLogout = () => {
-    // Clear admin token
-    localStorage.removeItem('adminToken');
+    // Clear all tokens using centralized utility
+    tokenUtils.clearAllTokens();
     
     // Update login state
     setIsLoggedIn(false);

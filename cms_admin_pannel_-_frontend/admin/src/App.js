@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { tokenUtils } from './utils/tokenUtils';
 
 // Components
 import Navbar from './components/Navbar/Navbar';
@@ -9,13 +10,27 @@ import AddMenu from './components/AddMenu/AddMenu';
 import ListItems from './components/ListItems/ListItems';
 import Orders from './components/Orders/Orders';
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const adminToken = localStorage.getItem('adminToken');
-    console.log('App init - token exists:', !!adminToken);
-    return !!adminToken;
+    return tokenUtils.hasToken();
   });
   const [menuItems, setMenuItems] = useState([]);
+
+  // Monitor token changes to debug token loss
+  useEffect(() => {
+    const checkToken = () => {
+      if (isLoggedIn && !tokenUtils.hasToken()) {
+        setIsLoggedIn(false);
+      }
+    };
+
+    // Check token every 5 seconds when logged in
+    const interval = isLoggedIn ? setInterval(checkToken, 5000) : null;
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoggedIn]);
 
   // CRUD operations for menu
   const handleAddMenuItem = (item) => {
@@ -58,13 +73,13 @@ function App() {
                   path="/listitems"
                   element={
                     <ListItems
-                      menuItems={menuItems}
                       onUpdateMenuItem={handleUpdateMenuItem}
                       onDeleteMenuItem={handleDeleteMenuItem}
                     />
                   }
                 />
                 <Route path="/orders" element={<Orders />} />
+
                 <Route path="*" element={<Navigate to="/addmenu" />} />
               </>
             )}

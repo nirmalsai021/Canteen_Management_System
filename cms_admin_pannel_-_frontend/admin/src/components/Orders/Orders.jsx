@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Orders.css';
+import { tokenUtils } from '../../utils/tokenUtils';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -7,9 +8,7 @@ const Orders = () => {
   const [error, setError] = useState('');
 
   const getAdminToken = () => {
-    const token = localStorage.getItem('adminToken');
-    console.log('Orders - Token:', token);
-    return token;
+    return tokenUtils.getToken();
   };
 
   const fetchOrders = async () => {
@@ -18,24 +17,26 @@ const Orders = () => {
 
     try {
       const token = getAdminToken();
-      if (!token) {
-        setError('No admin access token found. Please login again.');
-        return;
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/orders/admin/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      
+      // Try to fetch real orders from backend
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/`, { headers });
+      
       if (res.ok) {
         const data = await res.json();
-        setOrders(data.results || data);
+        setOrders(data.results || data || []);
       } else {
-        setError('Failed to fetch orders');
+        // Fallback to empty orders if endpoint requires auth
+        setOrders([]);
+        setError('No orders available or authentication required.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Network error. Please check your connection.');
+      // Fallback to empty orders on network error
+      setOrders([]);
+      setError('Unable to fetch orders. Check network connection.');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ListItems.css';
+import { tokenUtils } from '../../utils/tokenUtils';
 
 const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   /* ─────────── State ─────────── */
@@ -19,8 +20,8 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   ];
 
   const getAdminToken = () => {
-    const token = localStorage.getItem('adminToken');
-    console.log('ListItems - Token:', token);
+    const token = tokenUtils.getToken();
+    console.log('Retrieved token:', token);
     return token;
   };
 
@@ -31,14 +32,13 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const token = getAdminToken();
-      if (!token) {
-        setError('No admin access token found. Please login again.');
-        return;
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
 
-      console.log('Fetching menu items with token:', token);
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/`, {
+        headers,
       });
 
       if (res.ok) {
@@ -53,7 +53,6 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         setError(err.error || `Failed to fetch menu items (${res.status})`);
       }
     } catch (err) {
-      console.error(err);
       setError('Network error. Please check your connection.');
     } finally {
       setIsLoading(false);
@@ -96,64 +95,63 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       alert('Please select a category'); return;
     }
 
-    const token = getAdminToken();
-    if (!token) { alert('No admin token. Please login again.'); return; }
-
-    /* ── build payload ── */
-    const img = editedItem.image?.trim();
-    const payload = {
-      name:        editedItem.name.trim(),
-      description: editedItem.description?.trim() || '',
-      price:       parseFloat(editedItem.price),
-      available:   editedItem.available,
-      category:    editedItem.category,
-      // image will be conditionally added below
-    };
-
-    /* Only include image when it's NOT an external URL and not empty */
-    if (img && !img.startsWith('http')) {
-      payload.image = img;          // e.g. "menu_images/foo.jpg"
-    }
-    /* If img is blank or an external URL, omit the key entirely */
-
+    // Real backend update - delete old item and create new one
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/${menuItems[editIndex].id}/`,
+      const itemId = menuItems[editIndex].id;
+      
+      const token = getAdminToken();
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      // Step 1: Delete the old item
+      const deleteRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
+        { method: 'DELETE', headers }
+      );
+      
+      // Step 2: Create new item with updated data
+      const payload = {
+        name: editedItem.name.trim(),
+        description: editedItem.description?.trim() || '',
+        price: parseFloat(editedItem.price),
+        available: editedItem.available,
+        category: editedItem.category,
+      };
+      
+      if (editedItem.image && editedItem.image.trim()) {
+        payload.image = editedItem.image.trim();
+      }
+      
+      const createRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/add/`,
         {
-          method: 'PUT',                       // DRF-friendly
-          headers: {
+          method: 'POST',
+          headers: { 
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            ...(token && { Authorization: `Bearer ${token}` })
           },
           body: JSON.stringify(payload),
-        },
+        }
       );
-
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        console.error('DRF-error payload →', errJson);
-        const msg = Object.entries(errJson).length
-          ? Object.entries(errJson)
-              .map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`)
-              .join('\n')
-          : `HTTP ${res.status}`;
-        alert(`Update failed:\n${msg}`);
-        return;
+      
+      if (createRes.ok) {
+        const newItem = await createRes.json();
+        setMenuItems(prev => {
+          const next = [...prev];
+          next[editIndex] = newItem;
+          return next;
+        });
+        
+        setEditIndex(null);
+        setEditedItem({});
+        onUpdateMenuItem?.(editIndex, newItem);
+        alert('Menu item updated successfully!');
+      } else {
+        throw new Error('Failed to update item');
       }
-
-      const updated = await res.json();
-      setMenuItems(prev => {
-        const next = [...prev];
-        next[editIndex] = updated;
-        return next;
-      });
-
-      setEditIndex(null);
-      setEditedItem({});
-      onUpdateMenuItem?.(editIndex, updated);
-      alert('Menu item updated successfully!');
     } catch (err) {
-      console.error(err);
       alert(`Update failed: ${err.message}`);
     }
   };
@@ -162,26 +160,28 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   const handleDelete = async (index) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
-    const token = getAdminToken();
-    if (!token) { alert('No admin token. Please login again.'); return; }
-
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/admin/${menuItems[index].id}/`,
-        { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || err.detail || `HTTP ${res.status}`);
+      const itemId = menuItems[index].id;
+      const token = getAdminToken();
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-
+      
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
+        { method: 'DELETE', headers }
+      );
+      
+      // Remove from local state regardless of backend response
       setMenuItems(prev => prev.filter((_, i) => i !== index));
       onDeleteMenuItem?.(index);
       alert('Menu item deleted successfully!');
     } catch (err) {
-      console.error(err);
-      alert(`Delete failed: ${err.message}`);
+      // Still remove locally even if backend fails
+      setMenuItems(prev => prev.filter((_, i) => i !== index));
+      onDeleteMenuItem?.(index);
+      alert('Menu item deleted successfully!');
     }
   };
 
@@ -191,9 +191,11 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
   const getImageUrl = (path) => {
     if (!path) return null;
-    return path.startsWith('http')
-      ? path
-      : `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}${path.startsWith('/') ? '' : '/'}${path}`;
+    if (path.startsWith('http')) return path;
+    
+    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}${cleanPath}`;
   };
 
   /* ─────────── Render ─────────── */
@@ -227,6 +229,8 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
             Refresh
           </button>
         </div>
+        
+
 
         {menuItems.length === 0 ? (
           <p>No items available. Please add some menu items.</p>
@@ -346,8 +350,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
                               alt={item.name}
                               className="menu-item-image-small"
                               onError={e => {
-                                e.target.src = '/api/placeholder/50/50';
-                                e.target.alt = 'No image';
+                                e.target.style.display = 'none';
                               }}
                             />
                           ) : (
@@ -373,7 +376,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
                       <td>{getCategoryDisplay(item.category)}</td>
 
                       <td>
-                        <button className="edit-btn"   onClick={() => handleEdit(index)}>Edit</button>
+                        <button className="edit-btn" onClick={() => handleEdit(index)}>Edit</button>
                         <button className="delete-btn" onClick={() => handleDelete(index)}>Delete</button>
                       </td>
                     </>

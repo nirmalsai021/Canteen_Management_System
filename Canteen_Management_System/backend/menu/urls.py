@@ -19,4 +19,8 @@ urlpatterns = [
     path('add/', views.add_item, name='add-item'),
     path('<int:pk>/update/', views.update_item, name='update-item'),
     path('<int:pk>/delete/', views.delete_item, name='delete-item'),
+    
+    # Admin-specific endpoints
+    path('admin-list/', views.admin_menu_list, name='admin-menu-list'),
+    path('admin-orders/', views.admin_orders_list, name='admin-orders-list'),
 ]
