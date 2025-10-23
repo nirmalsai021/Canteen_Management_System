@@ -149,12 +149,14 @@ def delete_item(request, pk):
 
 # Admin-specific endpoints
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def admin_menu_list(request):
     items = MenuItem.objects.all()
     serializer = MenuItemSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def admin_orders_list(request):
     # Import here to avoid circular imports
     from orders.models import Order

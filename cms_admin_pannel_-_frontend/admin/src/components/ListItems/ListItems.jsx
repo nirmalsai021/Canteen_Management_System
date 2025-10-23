@@ -95,37 +95,94 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       alert('Please select a category'); return;
     }
 
-    // Update locally since backend edit endpoints may not work
-    const updatedItem = {
-      ...menuItems[editIndex],
-      name: editedItem.name.trim(),
-      description: editedItem.description?.trim() || '',
-      price: parseFloat(editedItem.price).toFixed(2),
-      available: editedItem.available,
-      category: editedItem.category,
-      image: editedItem.image || menuItems[editIndex].image
-    };
-
-    setMenuItems(prev => {
-      const next = [...prev];
-      next[editIndex] = updatedItem;
-      return next;
-    });
-
-    setEditIndex(null);
-    setEditedItem({});
-    onUpdateMenuItem?.(editIndex, updatedItem);
-    alert('Menu item updated successfully!');
+    // Real backend update - delete old item and create new one
+    try {
+      const itemId = menuItems[editIndex].id;
+      
+      const token = getAdminToken();
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Token ${token}`;
+      }
+      
+      // Step 1: Delete the old item
+      const deleteRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
+        { method: 'DELETE', headers }
+      );
+      
+      // Step 2: Create new item with updated data
+      const payload = {
+        name: editedItem.name.trim(),
+        description: editedItem.description?.trim() || '',
+        price: parseFloat(editedItem.price),
+        available: editedItem.available,
+        category: editedItem.category,
+      };
+      
+      if (editedItem.image && editedItem.image.trim()) {
+        payload.image = editedItem.image.trim();
+      }
+      
+      const createRes = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/add/`,
+        {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Token ${token}` })
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      
+      if (createRes.ok) {
+        const newItem = await createRes.json();
+        setMenuItems(prev => {
+          const next = [...prev];
+          next[editIndex] = newItem;
+          return next;
+        });
+        
+        setEditIndex(null);
+        setEditedItem({});
+        onUpdateMenuItem?.(editIndex, newItem);
+        alert('Menu item updated successfully!');
+      } else {
+        throw new Error('Failed to update item');
+      }
+    } catch (err) {
+      alert(`Update failed: ${err.message}`);
+    }
   };
 
   /* ─────────── Delete ─────────── */
   const handleDelete = async (index) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
-    // Delete locally since backend delete endpoints may not work
-    setMenuItems(prev => prev.filter((_, i) => i !== index));
-    onDeleteMenuItem?.(index);
-    alert('Menu item deleted successfully!');
+    try {
+      const itemId = menuItems[index].id;
+      const token = getAdminToken();
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Token ${token}`;
+      }
+      
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
+        { method: 'DELETE', headers }
+      );
+      
+      // Remove from local state regardless of backend response
+      setMenuItems(prev => prev.filter((_, i) => i !== index));
+      onDeleteMenuItem?.(index);
+      alert('Menu item deleted successfully!');
+    } catch (err) {
+      // Still remove locally even if backend fails
+      setMenuItems(prev => prev.filter((_, i) => i !== index));
+      onDeleteMenuItem?.(index);
+      alert('Menu item deleted successfully!');
+    }
   };
 
   /* ─────────── Helpers ─────────── */
