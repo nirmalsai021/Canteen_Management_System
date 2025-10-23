@@ -1,15 +1,20 @@
-# TODO: Fix 404 Errors by Making API RESTful
+# TODO: Fix Authentication and Deploy Backend
 
-## Backend Changes
-- [x] Update `Canteen_Management_System/backend/menu/urls.py` to add RESTful detail endpoint `path('<int:pk>/', views.MenuItemDetailView.as_view(), name='menu-detail')`
+## 1. Fix Admin Authentication
+- [x] Update simple_admin_auth.py to use real Django Token authentication instead of fake token
+- [x] Ensure admin login endpoints return valid tokens that work with TokenAuthentication
 
-## Frontend Changes
-- [x] Update `cms_admin_pannel_-_frontend/admin/src/components/ListItems/ListItems.jsx` to change update fetch URL from `/api/menu/${itemId}/update/` to `/api/menu/${itemId}/` (keep PUT method)
-- [x] Update `cms_admin_pannel_-_frontend/admin/src/components/ListItems/ListItems.jsx` to change delete fetch URL from `/api/menu/${itemId}/delete/` to `/api/menu/${itemId}/` (keep DELETE method)
+## 2. Prepare for Production Deployment
+- [x] Verify render.yaml configuration for Render deployment
+- [x] Update settings.py for production (DEBUG=False, ALLOWED_HOSTS)
+- [x] Ensure CORS allows mobile and web app origins
 
-## Testing
-- [x] Run backend server and frontend admin panel
-- [x] Verify update and delete operations work without 404 errors
-- [x] Ensure no conflicts with existing endpoints
-- [x] Push changes to GitHub
-- [x] Create pull request
+## 3. Test and Deploy
+- [x] Test admin login and menu endpoints locally
+- [ ] Deploy to Render
+- [ ] Verify backend works from mobile/web apps
+
+## 4. Final Verification
+- [x] Confirm 401 errors are fixed
+- [ ] Ensure data storage is in cloud (Render)
+- [ ] Test accessibility from different devices

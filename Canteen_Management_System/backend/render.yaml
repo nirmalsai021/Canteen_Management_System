@@ -8,4 +8,6 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "*"
+        value: "canteen-backend-bbqk.onrender.com,127.0.0.1,localhost"
+      - key: SECRET_KEY
+        value: "your-production-secret-key-here"
