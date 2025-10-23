@@ -112,7 +112,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/update/`,
         {
           method: 'PUT',
           headers: { 
@@ -157,7 +157,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
         { method: 'DELETE', headers }
       );
       
