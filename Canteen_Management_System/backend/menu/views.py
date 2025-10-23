@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, filters
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,16 +9,6 @@ from django.db.models import Q
 
 from .models import MenuItem
 from .serializers import MenuItemSerializer
-
-class IsAdminOrSimpleToken(BasePermission):
-    """Custom permission for admin access with simple token"""
-    def has_permission(self, request, view):
-        # Check for simple admin token
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if auth_header == 'Bearer admin-token-12345':
-            return True
-        # Allow all operations for backward compatibility
-        return True
 
 # Customer Views (Public/Authenticated)
 class CustomerMenuListView(generics.ListAPIView):
@@ -103,7 +94,8 @@ def search_menu(request):
 class MenuItemListCreateView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [IsAdminOrSimpleToken]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'available']
     search_fields = ['name', 'description']
@@ -111,7 +103,8 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
 class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = [IsAdminOrSimpleToken]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 # Function-based views (for backward compatibility)
 @api_view(['GET'])
@@ -121,7 +114,7 @@ def list_items(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAdminOrSimpleToken])
+@permission_classes([IsAuthenticated])
 def add_item(request):
     serializer = MenuItemSerializer(data=request.data)
     if serializer.is_valid():
@@ -130,7 +123,7 @@ def add_item(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT', 'PATCH'])
-@permission_classes([IsAdminOrSimpleToken])
+@permission_classes([IsAuthenticated])
 def update_item(request, pk):
     try:
         item = MenuItem.objects.get(pk=pk)
@@ -144,7 +137,7 @@ def update_item(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
-@permission_classes([IsAdminOrSimpleToken])
+@permission_classes([IsAuthenticated])
 def delete_item(request, pk):
     try:
         item = MenuItem.objects.get(pk=pk)

@@ -19,7 +19,7 @@ const Orders = () => {
       const token = getAdminToken();
       const headers = {};
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Token ${token}`;
       }
       
       // Try to fetch real orders from backend

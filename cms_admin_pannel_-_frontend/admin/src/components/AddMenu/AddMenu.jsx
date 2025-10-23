@@ -97,7 +97,7 @@ const AddMenu = ({ onAddMenuItem }) => {
 
       const headers = {};
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Token ${token}`;
       }
 
       if (image) {

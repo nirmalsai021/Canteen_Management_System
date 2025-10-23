@@ -34,7 +34,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       const token = getAdminToken();
       const headers = {};
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Token ${token}`;
       }
 
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/`, {
@@ -102,7 +102,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       const token = getAdminToken();
       const headers = {};
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Token ${token}`;
       }
       
       // Step 1: Delete the old item
@@ -130,7 +130,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` })
+            ...(token && { Authorization: `Token ${token}` })
           },
           body: JSON.stringify(payload),
         }
@@ -165,7 +165,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       const token = getAdminToken();
       const headers = {};
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Token ${token}`;
       }
       
       const res = await fetch(
