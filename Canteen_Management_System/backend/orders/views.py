@@ -2,6 +2,7 @@
 from rest_framework import generics, status, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.timezone import now
@@ -18,14 +19,10 @@ from .serializers import (
 )
 
 class IsAdminOrSimpleToken(BasePermission):
-    """Custom permission for admin access with simple token"""
+    """Custom permission for admin access with token"""
     def has_permission(self, request, view):
-        # Check for simple admin token
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if auth_header == 'Bearer admin-token-12345':
-            return True
-        # Allow all operations for backward compatibility
-        return True
+        # Check if user is authenticated with token
+        return request.user and request.user.is_authenticated
 
 class CustomerOrderListView(generics.ListAPIView):
     """List all orders for the authenticated customer"""
@@ -110,7 +107,8 @@ def cancel_order(request, order_id):
 class AdminOrderListView(generics.ListAPIView):
     """Admin view to list all orders with filtering"""
     serializer_class = OrderSerializer
-    permission_classes = [IsAdminOrSimpleToken]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'user']

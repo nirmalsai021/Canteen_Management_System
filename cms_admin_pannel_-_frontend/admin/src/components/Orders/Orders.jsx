@@ -23,7 +23,7 @@ const Orders = () => {
       }
       
       // Try to fetch real orders from backend
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/`, { headers });
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/admin/`, { headers });
       
       if (res.ok) {
         const data = await res.json();

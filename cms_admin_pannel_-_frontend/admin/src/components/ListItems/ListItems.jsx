@@ -95,23 +95,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       alert('Please select a category'); return;
     }
 
-    // Real backend update - delete old item and create new one
     try {
       const itemId = menuItems[editIndex].id;
-      
       const token = getAdminToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
       
-      // Step 1: Delete the old item
-      const deleteRes = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/delete/`,
-        { method: 'DELETE', headers }
-      );
-      
-      // Step 2: Create new item with updated data
       const payload = {
         name: editedItem.name.trim(),
         description: editedItem.description?.trim() || '',
@@ -124,10 +111,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         payload.image = editedItem.image.trim();
       }
       
-      const createRes = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/add/`,
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/update/`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: { 
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Token ${token}` })
@@ -136,20 +123,21 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         }
       );
       
-      if (createRes.ok) {
-        const newItem = await createRes.json();
+      if (response.ok) {
+        const updatedItem = await response.json();
         setMenuItems(prev => {
           const next = [...prev];
-          next[editIndex] = newItem;
+          next[editIndex] = updatedItem;
           return next;
         });
         
         setEditIndex(null);
         setEditedItem({});
-        onUpdateMenuItem?.(editIndex, newItem);
+        onUpdateMenuItem?.(editIndex, updatedItem);
         alert('Menu item updated successfully!');
       } else {
-        throw new Error('Failed to update item');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Update failed (${response.status})`);
       }
     } catch (err) {
       alert(`Update failed: ${err.message}`);
