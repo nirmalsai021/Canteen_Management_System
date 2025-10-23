@@ -53,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 # ===================== CORS SETTINGS =====================
-# Allow all origins for development, specific for production
+# Allow all origins for now (can be restricted later)
 CORS_ALLOW_ALL_ORIGINS = os.environ.get('DEBUG', 'True') == 'True'
 
 # Specific origins (use this in production)
@@ -63,9 +63,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://canteen-management-system-coral.vercel.app",
     "https://canteen-management-system-lo73.vercel.app",
     "https://canteen-admin-panel.vercel.app",
-    # Add mobile app origins if needed
-    "http://localhost:19006",  # Expo/React Native default
-    "exp://*",  # Expo development
 ]
 
 # Allow credentials to be included in CORS requests
