@@ -15,7 +15,7 @@ const Cart = ({ cart, setCart }) => {
 
   const axiosConfig = {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Token ${token}`,
     },
   };
 

@@ -38,7 +38,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
 
     try {
       const res = await axios.get(`${API_BASE}/api/cart/`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Token ${token}` },
       });
 
       const cartItems = res.data.items ?? res.data.cart_items ?? [];
@@ -89,7 +89,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         await axios.put(
           `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
           { quantity: newQty },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Token ${token}` } }
         );
         setCart({
           ...cart,
@@ -103,7 +103,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
             menu_item_id: item.id,
             quantity: 1,
           },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Token ${token}` } }
         );
         const newItem = res.data.cart_item;
         setCart({
@@ -137,7 +137,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       if (newQty <= 0) {
         await axios.delete(
           `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/remove/`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Token ${token}` } }
         );
         const updatedCart = { ...cart };
         delete updatedCart[item.id];
@@ -147,7 +147,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         await axios.put(
           `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
           { quantity: newQty },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Token ${token}` } }
         );
         setCart({
           ...cart,
