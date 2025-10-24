@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../api";
 import Lottie from "lottie-react";
 import "./SignIn.css";
 import kitchenAnimation from "./t8twSqZf0H.json";
@@ -16,13 +16,14 @@ const SignIn = ({ setUserEmail, setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/login/`, {
+      const response = await api.post('/api/users/login/', {
         username,
         password,
       });
 
       const { access, refresh, user } = response.data;
 
+      localStorage.setItem("user-token", access);
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("user", JSON.stringify(user));

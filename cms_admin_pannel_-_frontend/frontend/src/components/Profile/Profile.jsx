@@ -1,57 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import './Profile.css';
+
+
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('access_token');
 
-  const refreshAccessToken = async () => {
-    const refresh = localStorage.getItem('refresh_token');
-    if (!refresh) return null;
-
-    try {
-      const res = await axios.post('http://localhost:8000/api/token/refresh/', { refresh });
-      const newAccess = res.data.access;
-      localStorage.setItem('access_token', newAccess);
-      return newAccess;
-    } catch (err) {
-      console.error('Token refresh failed:', err);
-      return null;
+  const fetchProfile = async () => {
+    if (!token) {
+      setError('You are not logged in.');
+      return;
     }
-  };
 
-  const fetchProfile = async (accessToken) => {
     try {
-      const res = await axios.get('http://localhost:8000/api/users/profile/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await api.get('/api/users/profile/');
 
       setUserData(res.data);
     } catch (err) {
+      console.error('Profile fetch error:', err);
       if (err.response?.status === 401) {
-        const newToken = await refreshAccessToken();
-        if (newToken) {
-          fetchProfile(newToken);
-        } else {
-          setError('Session expired. Please log in again.');
-        }
+        setError('Session expired. Please log in again.');
       } else {
-        console.error('Profile fetch error:', err);
         setError('Failed to load profile information.');
       }
     }
   };
 
   useEffect(() => {
-    if (!token) {
-      setError('You are not logged in.');
-    } else {
-      fetchProfile(token);
-    }
+    fetchProfile();
   }, []);
 
   return (

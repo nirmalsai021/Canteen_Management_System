@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api';
 import Lottie from 'lottie-react';
 import './Register.css';
 import foodAnimation from './MwReSvpOcP.json'; // ⬅️ Directly using your existing JSON file
@@ -33,13 +34,7 @@ const Register = ({ setUserEmail }) => {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/register/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await api.post('/api/users/register/', formData);
 
       if (response.status === 201) {
         const data = await response.json();

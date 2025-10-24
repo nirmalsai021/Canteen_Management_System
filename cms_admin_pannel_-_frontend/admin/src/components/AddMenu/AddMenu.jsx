@@ -19,11 +19,11 @@ const AddMenu = ({ onAddMenuItem }) => {
 
   // Category options based on API documentation
   const categoryOptions = [
-  { display: 'Breakfast', value: 'breakfast' },
-  { display: 'Lunch', value: 'lunch' },
-  { display: 'Drinks', value: 'drinks' },
-  { display: 'Snacks', value: 'snacks' }
-];
+    { display: 'Breakfast', value: 'breakfast' },
+    { display: 'Lunch', value: 'lunch' },
+    { display: 'Drinks', value: 'drinks' },
+    { display: 'Snacks', value: 'snacks' }
+  ];
 
 
   // Get admin token using centralized utility
@@ -110,7 +110,7 @@ const AddMenu = ({ onAddMenuItem }) => {
         formData.append('category', menuItem.category);
         formData.append('image', image);
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/add/`, {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/add/`, {
           method: 'POST',
           headers,
           body: formData
@@ -125,7 +125,7 @@ const AddMenu = ({ onAddMenuItem }) => {
           category: menuItem.category
         };
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/add/`, {
+        response = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/add/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

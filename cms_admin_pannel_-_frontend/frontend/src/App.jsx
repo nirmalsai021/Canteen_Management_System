@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import api from './api';
 import axios from 'axios';
 
 import Navbar from './components/Navbar/Navbar';
@@ -14,7 +15,7 @@ import Profile from './components/Profile/Profile';
 import Orders from './components/Orders/Orders';
 import Intro from './components/Intro/Intro'; // ✅ Intro splash screen
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 
 const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   const [cart, setCart] = useState({});
@@ -33,13 +34,11 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
 
   // ✅ Fetch cart function
   const fetchCart = async () => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('user-token');
     if (!token) return;
 
     try {
-      const res = await axios.get(`${API_BASE}/api/cart/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
+      const res = await api.get('/api/cart/');
 
       const cartItems = res.data.items ?? res.data.cart_items ?? [];
       const updatedCart = {};
@@ -75,7 +74,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
 
   // ✅ Add to cart
   const addToCart = async (item) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('user-token');
     if (!token) {
       alert('Please log in to add items to your cart.');
       return;
@@ -86,10 +85,9 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     try {
       if (existingItem) {
         const newQty = existingItem.quantity + 1;
-        await axios.put(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
-          { quantity: newQty },
-          { headers: { Authorization: `Token ${token}` } }
+        await api.put(
+          `/api/cart/items/${existingItem.cart_item_id}/update/`,
+          { quantity: newQty }
         );
         setCart({
           ...cart,
@@ -97,13 +95,12 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         });
         console.log(`🔄 Increased quantity of ${item.name}`);
       } else {
-        const res = await axios.post(
-          `${API_BASE}/api/cart/add/`,
+        const res = await api.post(
+          '/api/cart/add/',
           {
             menu_item_id: item.id,
             quantity: 1,
-          },
-          { headers: { Authorization: `Token ${token}` } }
+          }
         );
         const newItem = res.data.cart_item;
         setCart({
@@ -125,7 +122,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
 
   // ✅ Remove from cart
   const removeFromCart = async (item) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('user-token');
     if (!token) return;
 
     const existingItem = cart[item.id];
@@ -135,19 +132,17 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       const newQty = existingItem.quantity - 1;
 
       if (newQty <= 0) {
-        await axios.delete(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/remove/`,
-          { headers: { Authorization: `Token ${token}` } }
+        await api.delete(
+          `/api/cart/items/${existingItem.cart_item_id}/remove/`
         );
         const updatedCart = { ...cart };
         delete updatedCart[item.id];
         setCart(updatedCart);
         console.log(`🗑️ Removed item: ${item.name}`);
       } else {
-        await axios.put(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
-          { quantity: newQty },
-          { headers: { Authorization: `Token ${token}` } }
+        await api.put(
+          `/api/cart/items/${existingItem.cart_item_id}/update/`,
+          { quantity: newQty }
         );
         setCart({
           ...cart,
@@ -203,7 +198,7 @@ const App = () => {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!localStorage.getItem('access_token');
+    return !!localStorage.getItem('user-token');
   });
 
   // ✅ Prevent zoom on iOS double-tap

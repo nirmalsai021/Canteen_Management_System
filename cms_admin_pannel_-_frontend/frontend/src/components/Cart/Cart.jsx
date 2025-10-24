@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import './Cart.css';
-
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const Cart = ({ cart, setCart }) => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [placingOrder, setPlacingOrder] = useState(false); // ✅ Added loader state
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('access_token');
   const user = JSON.parse(localStorage.getItem('user'));
-
-  const axiosConfig = {
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-  };
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/cart/`, axiosConfig);
+      const res = await api.get('/api/cart/');
       const data = res.data;
       console.log('📦 Fetched Cart Response:', data);
 
@@ -53,7 +44,7 @@ const Cart = ({ cart, setCart }) => {
   };
 
   useEffect(() => {
-    if (token) fetchCart();
+    fetchCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,7 +53,7 @@ const Cart = ({ cart, setCart }) => {
     if (!cartItemId) return;
 
     try {
-      await axios.delete(`${API_BASE}/api/cart/items/${cartItemId}/remove/`, axiosConfig);
+      await api.delete(`/api/cart/items/${cartItemId}/remove/`);
       const updated = { ...cart };
       delete updated[menuItemId];
       setCart(updated);
@@ -80,10 +71,9 @@ const Cart = ({ cart, setCart }) => {
     if (newQuantity < 1) return;
 
     try {
-      await axios.put(
-        `${API_BASE}/api/cart/items/${item.cart_item_id}/update/`,
-        { quantity: newQuantity },
-        axiosConfig
+      await api.put(
+        `/api/cart/items/${item.cart_item_id}/update/`,
+        { quantity: newQuantity }
       );
       setCart({
         ...cart,
@@ -104,10 +94,9 @@ const Cart = ({ cart, setCart }) => {
     setPlacingOrder(true); // ✅ Start placing
 
     try {
-      const res = await axios.post(
-        `${API_BASE}/api/orders/place/`,
-        { notes: 'Deliver quickly' },
-        axiosConfig
+      const res = await api.post(
+        '/api/orders/place/',
+        { notes: 'Deliver quickly' }
       );
 
       const { order } = res.data;

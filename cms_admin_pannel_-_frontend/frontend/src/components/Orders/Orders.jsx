@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import './Orders.css';
 
 const Orders = () => {
@@ -7,11 +7,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cancellingOrder, setCancellingOrder] = useState(null);
-
-  const token =
-    localStorage.getItem('customer_access_token') ||
-    localStorage.getItem('access_token') ||
-    '';
+  const [showClearHistory, setShowClearHistory] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -24,21 +20,12 @@ const Orders = () => {
     CANCELLED: 'Cancelled',
   };
 
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
   const fetchOrders = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/orders/`,
-        axiosConfig
-      );
+      const { data } = await api.get('/api/orders/');
       const apiOrders = data.results ?? data;
 
       let unsavedLocal = [];
@@ -70,11 +57,7 @@ const Orders = () => {
     setCancellingOrder(orderId);
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/orders/${orderId}/cancel/`,
-        {},
-        axiosConfig
-      );
+      await api.post(`/api/orders/${orderId}/cancel/`);
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
@@ -113,6 +96,19 @@ const Orders = () => {
 
   const canCancelOrder = (order) => {
     return order.id && !['CANCELLED', 'DELIVERED'].includes(order.status);
+  };
+
+  const handleClearHistory = () => {
+    if (!window.confirm('Are you sure you want to clear all order history? This action cannot be undone.')) return;
+
+    if (user?.email) {
+      const localKey = `orderHistory_${user.email}`;
+      localStorage.removeItem(localKey);
+    }
+
+    setOrders([]);
+    setShowClearHistory(false);
+    alert('Order history cleared successfully!');
   };
 
   useEffect(() => {
@@ -162,7 +158,77 @@ const Orders = () => {
         >
           Refresh
         </button>
+        {orders.length > 0 && (
+          <button
+            onClick={() => setShowClearHistory(true)}
+            className="clear-history-btn"
+            style={{
+              marginLeft: '10px',
+              padding: '5px 15px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Clear History
+          </button>
+        )}
       </h2>
+
+      {showClearHistory && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            textAlign: 'center'
+          }}>
+            <h3>Clear Order History</h3>
+            <p>Are you sure you want to clear all order history? This action cannot be undone.</p>
+            <button
+              onClick={handleClearHistory}
+              style={{
+                margin: '10px',
+                padding: '10px 20px',
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Yes, Clear History
+            </button>
+            <button
+              onClick={() => setShowClearHistory(false)}
+              style={{
+                margin: '10px',
+                padding: '10px 20px',
+                backgroundColor: '#6c757d',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <p>Loading your orders...</p>

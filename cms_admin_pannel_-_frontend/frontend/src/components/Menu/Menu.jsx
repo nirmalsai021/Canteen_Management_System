@@ -9,7 +9,7 @@ import easyLunch from './easy.jpg';
 import drinks from './drinks.jpeg';
 import snacks from './snacks.jpg';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 
 // ✅ Helper to read search query
 const useQuery = () => new URLSearchParams(useLocation().search);
@@ -54,10 +54,10 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
 
       const url =
         searchTerm || filter
-          ? `${API_BASE}/api/menu/customer/search/`
-          : `${API_BASE}/api/menu/customer/`;
+          ? '/api/menu/customer/search/'
+          : '/api/menu/customer/';
 
-      const response = await axios.get(url, { params });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}${url}`, { params });
 
       setMenuItems(response.data);
     } catch (err) {
@@ -126,7 +126,7 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
             menuItems.map((item) => (
               <div key={item.id} className="food-card">
                 <img
-                  src={item.image ? (item.image.startsWith('http') ? item.image : `${API_BASE}${item.image}`) : '/no-image.svg'}
+                  src={item.image ? (item.image.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}${item.image}`) : '/no-image.svg'}
                   alt={item.name}
                   className="food-image"
                   onError={(e) => {

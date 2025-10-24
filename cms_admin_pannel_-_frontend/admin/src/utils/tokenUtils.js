@@ -1,5 +1,5 @@
 // Token management utility for admin panel
-const TOKEN_KEY = 'adminToken';
+const TOKEN_KEY = 'admin-token';
 
 export const tokenUtils = {
   // Get admin token

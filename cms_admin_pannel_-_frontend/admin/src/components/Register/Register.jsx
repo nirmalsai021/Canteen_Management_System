@@ -24,7 +24,7 @@ const Register = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/admin/register/`,
+        `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/users/admin/register/`,
         formData,
         {
           headers: {
