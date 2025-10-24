@@ -3,6 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth.models import User
 from .models import CustomerProfile, AdminProfile
 from .serializers import (
@@ -127,6 +128,7 @@ class LogoutView(APIView):
 class CustomerProfileView(generics.RetrieveUpdateAPIView):
     """Customer profile management"""
     serializer_class = CustomerProfileSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../api';
+import axios from 'axios';
 import './Profile.css';
 
 
@@ -16,7 +16,11 @@ const Profile = () => {
     }
 
     try {
-      const res = await api.get('/api/users/profile/');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/users/profile/`, {
+        headers: {
+          Authorization: `Token ${token}`
+        }
+      });
 
       setUserData(res.data);
     } catch (err) {
