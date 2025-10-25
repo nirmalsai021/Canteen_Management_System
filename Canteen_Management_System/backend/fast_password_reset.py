@@ -11,32 +11,41 @@ import json
 from django.core.cache import cache
 
 def send_email_async(email, code, user_name):
-    """Send email using Django's send_mail with proper configuration"""
+    """Send email using SendGrid HTTPS API"""
     try:
-        subject = "Password Reset Code - MITS Canteen"
-        message = f"""Hello,
-
-Your password reset verification code is: {code}
-
-This code will expire in 10 minutes.
-
-If you didn't request this password reset, please ignore this email.
-
-Best regards,
-MITS Canteen Team"""
+        import requests
         
-        from django.core.mail import send_mail
+        # SendGrid API endpoint
+        url = "https://api.sendgrid.com/v3/mail/send"
         
-        result = send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False  # This will raise exceptions if email fails
-        )
+        # Email data
+        data = {
+            "personalizations": [{
+                "to": [{"email": email}],
+                "subject": "Password Reset Code - MITS Canteen"
+            }],
+            "from": {"email": settings.DEFAULT_FROM_EMAIL},
+            "content": [{
+                "type": "text/plain",
+                "value": f"Hello,\n\nYour password reset verification code is: {code}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this password reset, please ignore this email.\n\nBest regards,\nMITS Canteen Team"
+            }]
+        }
         
-        print(f"Email sent successfully to {email}. Result: {result}")
-        return True
+        # Headers with API key
+        headers = {
+            "Authorization": f"Bearer {settings.SENDGRID_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        # Send via HTTPS API
+        response = requests.post(url, json=data, headers=headers, timeout=30)
+        
+        if response.status_code == 202:
+            print(f"Email sent successfully to {email} via SendGrid API")
+            return True
+        else:
+            print(f"SendGrid API error: {response.status_code} - {response.text}")
+            return False
         
     except Exception as e:
         print(f"Email sending failed to {email}: {str(e)}")
