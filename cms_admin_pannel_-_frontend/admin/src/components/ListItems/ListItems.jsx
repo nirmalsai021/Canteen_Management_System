@@ -37,7 +37,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         headers.Authorization = `Token ${token}`;
       }
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/menu/`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/`, {
         headers,
       });
 
@@ -112,7 +112,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
+        `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/${itemId}/update/`,
         {
           method: 'PUT',
           headers: {
@@ -157,7 +157,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
       }
       
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/menu/${itemId}/`,
+        `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/${itemId}/delete/`,
         { method: 'DELETE', headers }
       );
       
@@ -181,7 +181,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
     
-    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const baseUrl = process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com';
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     return `${baseUrl}${cleanPath}`;
   };

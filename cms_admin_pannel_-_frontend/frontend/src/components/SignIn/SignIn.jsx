@@ -16,7 +16,7 @@ const SignIn = ({ setUserEmail, setIsLoggedIn }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/login/`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/users/login/`, {
         username,
         password,
       });
@@ -25,6 +25,7 @@ const SignIn = ({ setUserEmail, setIsLoggedIn }) => {
 
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("user-token", access);
       localStorage.setItem("user", JSON.stringify(user));
 
       if (setUserEmail) setUserEmail(user.email);
