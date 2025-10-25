@@ -1,4 +1,4 @@
-/* ====== Navbar Container ====== */
+/* Navbar - Responsive Design */
 .navbar {
   position: sticky;
   top: 0;
@@ -9,18 +9,19 @@
   background-color: #003366;
   color: white;
   padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* ====== Logo Style ====== */
 .logo {
   font-size: 24px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
-/* ====== Navigation Links ====== */
 .nav-links {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .nav-btn,
@@ -30,15 +31,99 @@
   color: white;
   font-weight: bold;
   font-size: 16px;
-  margin-left: 15px;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.3s ease;
   padding: 8px 12px;
   border-radius: 6px;
+  white-space: nowrap;
 }
 
 .nav-btn:hover,
 .logout-button:hover {
   background-color: #ff4d4d;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 3px 0;
+  transition: 0.3s;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 15px;
+  }
+  
+  .logo {
+    font-size: 20px;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+  
+  .hamburger {
+    display: flex;
+  }
+  
+  .nav-links.mobile-open {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #003366;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .nav-btn,
+  .logout-button {
+    font-size: 14px;
+    padding: 10px;
+    margin: 5px 0;
+    text-align: center;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .logo {
+    font-size: 22px;
+  }
+  
+  .nav-btn,
+  .logout-button {
+    font-size: 15px;
+    padding: 8px 10px;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+  .navbar {
+    padding: 15px 30px;
+  }
+  
+  .logo {
+    font-size: 26px;
+  }
+  
+  .nav-btn,
+  .logout-button {
+    font-size: 17px;
+    padding: 10px 15px;
+  }
 }

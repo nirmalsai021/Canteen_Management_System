@@ -1,19 +1,93 @@
+/* Sidebar - Responsive Design */
 .sidebar {
-  position: sticky;
-  top: 70px; /* below navbar */
-  height: calc(100vh - 70px);
-  width: 150px;
   background-color: #f0f0f0;
-  padding-top: 20px;
+  transition: all 0.3s ease;
+  overflow-y: auto;
 }
 
 .sidebar a {
   display: block;
-  padding: 10px;
+  padding: 15px 20px;
   color: #333;
   text-decoration: none;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
 }
 
 .sidebar a:hover {
   background-color: #ddd;
+  color: #003366;
+}
+
+.sidebar a.active {
+  background-color: #003366;
+  color: white;
+}
+
+/* Mobile - Hidden sidebar, use hamburger menu */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    padding-top: 60px;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar a {
+    padding: 20px;
+    font-size: 16px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    width: 180px;
+    padding-top: 20px;
+  }
+  
+  .sidebar a {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+}
+
+/* Laptop and Desktop */
+@media (min-width: 1025px) {
+  .sidebar {
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    width: 200px;
+    padding-top: 20px;
+  }
+  
+  .sidebar a {
+    padding: 15px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+  .sidebar {
+    width: 220px;
+  }
+  
+  .sidebar a {
+    padding: 18px 25px;
+    font-size: 15px;
+  }
 }
