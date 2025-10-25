@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from admin_login import bulletproof_admin_login
 from simple_admin_auth import simple_admin_login
 from serve_media import serve_media
+from password_reset import send_reset_code, verify_reset_code
 
 urlpatterns = [
     # Admin interface
@@ -29,6 +30,10 @@ urlpatterns = [
     
     # Media files serving
     path('media/<path:path>', serve_media, name='serve_media'),
+    
+    # Password reset endpoints
+    path('api/password-reset/send-code/', send_reset_code, name='send_reset_code'),
+    path('api/password-reset/verify/', verify_reset_code, name='verify_reset_code'),
 ]
 
 # ✅ Serve media files in both development and production
