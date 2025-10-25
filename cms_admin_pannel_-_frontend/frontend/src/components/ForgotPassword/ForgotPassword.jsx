@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './ForgotPassword.css';
 
 const ForgotPassword = () => {
@@ -8,7 +9,8 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -46,10 +48,7 @@ const ForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+
 
     if (newPassword.length < 6) {
       setError('Password must be at least 6 characters');
@@ -90,79 +89,109 @@ const ForgotPassword = () => {
 
   return (
     <div className="forgot-password-container">
-      <div className="forgot-password-form">
-        <h2>Reset Password</h2>
-        
+      <div className="forgot-password-card">
         {step === 1 ? (
-          <form onSubmit={handleSendCode}>
-            <p>Enter your email address to receive a verification code</p>
+          <>
+            <h1>Forgot Password</h1>
             
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
+            <form onSubmit={handleSendCode}>
+              <div className="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+              
+              <button type="submit" disabled={loading} className="primary-btn">
+                {loading ? 'Sending...' : 'Send Reset Code'}
+              </button>
+            </form>
             
-            <button type="submit" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Code'}
-            </button>
-          </form>
+            <div className="form-links">
+              <button onClick={() => navigate('/login')} className="link-btn">
+                Back to Login
+              </button>
+              <span> | </span>
+              <button onClick={() => setStep(2)} className="link-btn">
+                Have a reset code?
+              </button>
+            </div>
+          </>
         ) : (
-          <form onSubmit={handleResetPassword}>
-            <p>Enter the verification code sent to {email}</p>
+          <>
+            <h1>Reset Password</h1>
             
-            <input
-              type="text"
-              placeholder="Enter 6-digit code"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              maxLength="6"
-              required
-              disabled={loading}
-            />
+            <form onSubmit={handleResetPassword}>
+              <div className="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Reset Code</label>
+                <input
+                  type="text"
+                  placeholder="Enter 6-character code from email"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  maxLength="6"
+                  required
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>New Password</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="form-input"
+                  />
+                  <span
+                    className="password-toggle-icon"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                </div>
+              </div>
+              
+              <button type="submit" disabled={loading} className="primary-btn">
+                {loading ? 'Resetting...' : 'Reset Password'}
+              </button>
+            </form>
             
-            <input
-              type="password"
-              placeholder="New password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
-            
-            <input
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
-            
-            <button type="submit" disabled={loading}>
-              {loading ? 'Resetting...' : 'Reset Password'}
-            </button>
-            
-            <button 
-              type="button" 
-              onClick={() => setStep(1)}
-              className="back-btn"
-              disabled={loading}
-            >
-              Back to Email
-            </button>
-          </form>
+            <div className="form-links">
+              <button onClick={() => navigate('/login')} className="link-btn">
+                Back to Login
+              </button>
+              <span> | </span>
+              <button onClick={() => setStep(1)} className="link-btn">
+                Resend Code
+              </button>
+            </div>
+          </>
         )}
         
         {message && <div className="success-message">{message}</div>}
         {error && <div className="error-message">{error}</div>}
-        
-        <button onClick={() => navigate('/login')} className="cancel-btn">
-          Back to Login
-        </button>
       </div>
     </div>
   );
