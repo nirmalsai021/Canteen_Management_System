@@ -107,7 +107,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         category: editedItem.category,
       };
       
-      // Don't send image field for updates to avoid validation errors
+      // Handle image field properly
+      if (editedItem.image && editedItem.image.trim() && editedItem.image !== menuItems[editIndex].image) {
+        payload.image = editedItem.image.trim();
+      }
       
       const response = await fetch(
         `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/${itemId}/update/`,
