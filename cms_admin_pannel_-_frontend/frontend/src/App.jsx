@@ -12,7 +12,8 @@ import Menu from './components/Menu/Menu';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import Profile from './components/Profile/Profile';
 import Orders from './components/Orders/Orders';
-import Intro from './components/Intro/Intro'; // ✅ Intro splash screen
+import Intro from './components/Intro/Intro';
+import ServerStatus from './components/ServerStatus';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -165,6 +166,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     <Intro />
   ) : (
     <>
+      <ServerStatus />
       <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} cart={cart} />
       <div className="app-container" style={{ touchAction: 'pan-y' }}>
         <Routes>

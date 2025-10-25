@@ -6,8 +6,8 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
-// Add request timeout
-api.defaults.timeout = 10000; // 10 seconds
+// Add request timeout - longer for cold starts
+api.defaults.timeout = 60000; // 60 seconds for Render cold start
 
 api.interceptors.request.use((config) => {
   const userToken = localStorage.getItem("user-token");

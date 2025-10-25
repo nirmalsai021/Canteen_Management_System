@@ -76,7 +76,11 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
       setMenuItems(response.data);
     } catch (err) {
       console.error('❌ Error fetching menu:', err);
-      setError('Failed to load menu items.');
+      if (err.code === 'ECONNABORTED') {
+        setError('Server is starting up, please wait 30-60 seconds and refresh...');
+      } else {
+        setError('Failed to load menu items. Please refresh the page.');
+      }
     } finally {
       setLoading(false);
     }
@@ -142,6 +146,7 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
             margin: '0 auto 10px'
           }}></div>
           <p>Loading delicious menu...</p>
+          <p style={{ fontSize: '12px', color: '#999', marginTop: '10px' }}>First load may take 30-60 seconds</p>
           <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
         </div>
       ) : error ? (
