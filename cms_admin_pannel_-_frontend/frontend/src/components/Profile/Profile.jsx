@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import './Profile.css';
 
 const Profile = () => {
@@ -12,7 +12,7 @@ const Profile = () => {
     if (!refresh) return null;
 
     try {
-      const res = await axios.post('http://localhost:8000/api/token/refresh/', { refresh });
+      const res = await api.post('/api/token/refresh/', { refresh });
       const newAccess = res.data.access;
       localStorage.setItem('access_token', newAccess);
       return newAccess;
@@ -24,11 +24,7 @@ const Profile = () => {
 
   const fetchProfile = async (accessToken) => {
     try {
-      const res = await axios.get('http://localhost:8000/api/users/profile/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await api.get('/api/users/profile/');
 
       setUserData(res.data);
     } catch (err) {
@@ -68,8 +64,17 @@ const Profile = () => {
           <p className="error-message">{error}</p>
         ) : userData ? (
           <div className="profile-details">
-            <p><strong>Full Name:</strong> {userData.user.first_name} {userData.user.last_name}</p>
-            <p><strong>Email:</strong> {userData.user.email}</p>
+            <p><strong>Username:</strong> {userData.user?.username || 'N/A'}</p>
+            <p><strong>Full Name:</strong> {userData.user?.first_name || ''} {userData.user?.last_name || ''}</p>
+            <p><strong>Email:</strong> {userData.user?.email || 'N/A'}</p>
+            <p><strong>User Type:</strong> {userData.user_type || 'Customer'}</p>
+            {userData.profile && (
+              <div>
+                <p><strong>Phone:</strong> {userData.profile.phone || 'Not provided'}</p>
+                {userData.profile.roll_number && <p><strong>Roll Number:</strong> {userData.profile.roll_number}</p>}
+                {userData.profile.address && <p><strong>Address:</strong> {userData.profile.address}</p>}
+              </div>
+            )}
           </div>
         ) : (
           <p>Loading profile...</p>

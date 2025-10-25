@@ -53,8 +53,8 @@ MIDDLEWARE = [
 ]
 
 # ===================== CORS SETTINGS =====================
-# Allow all origins for now (can be restricted later)
-CORS_ALLOW_ALL_ORIGINS = os.environ.get('DEBUG', 'True') == 'True'
+# Allow all origins for development and production
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Specific origins (use this in production)
 CORS_ALLOWED_ORIGINS = [
