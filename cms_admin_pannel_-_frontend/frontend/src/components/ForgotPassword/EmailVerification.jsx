@@ -35,15 +35,10 @@ const EmailVerification = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Show debug code if available (temporary for testing)
-        if (data.debug_code) {
-          setMessage(`Code sent to email! Debug code: ${data.debug_code}`);
-        } else {
-          setMessage('Verification code sent to your email! Redirecting...');
-        }
+        setMessage('Verification code sent to your email! Redirecting...');
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
-        }, 3000);
+        }, 1500);
       } else {
         if (response.status === 404) {
           setError('No account found with this email address. Please check your email or register first.');
