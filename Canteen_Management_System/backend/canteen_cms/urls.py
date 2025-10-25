@@ -33,8 +33,8 @@ urlpatterns = [
     path('media/<path:path>', serve_media, name='serve_media'),
     
     # Password reset endpoints
-    path('api/password-reset/send-code/', simple_send_code, name='send_reset_code'),
-    path('api/password-reset/verify/', simple_verify_code, name='verify_reset_code'),
+    path('api/password-reset/send-code/', send_reset_code, name='send_reset_code'),
+    path('api/password-reset/verify/', verify_reset_code, name='verify_reset_code'),
 ]
 
 # ✅ Serve media files in both development and production
