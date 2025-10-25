@@ -1,39 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import './Orders.css';
-import { tokenUtils } from '../../utils/tokenUtils';
+import api from '../../api';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const getAdminToken = () => {
-    return tokenUtils.getToken();
-  };
-
   const fetchOrders = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const token = getAdminToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
-      
-      // Try to fetch real orders from backend
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/admin/`, { headers });
-      
-      if (res.ok) {
-        const data = await res.json();
-        setOrders(data.results || data || []);
-      } else {
-        // Fallback to empty orders if endpoint requires auth
-        setOrders([]);
-        setError('No orders available or authentication required.');
-      }
+      // Use the configured API instance which handles authentication
+      const response = await api.get('/api/orders/admin/');
+      setOrders(response.data.results || response.data || []);
     } catch (err) {
+      console.error('Error fetching orders:', err);
       // Fallback to empty orders on network error
       setOrders([]);
       setError('Unable to fetch orders. Check network connection.');
@@ -44,7 +27,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <div>Loading orders...</div>;
   if (error) return <div className="error">{error}</div>;

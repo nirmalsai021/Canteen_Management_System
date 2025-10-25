@@ -23,8 +23,8 @@ if not User.objects.filter(username=username).exists():
     # Create admin profile
     AdminProfile.objects.get_or_create(user=user)
     
-    print(f"✅ Admin user created successfully!")
+    print(f"Admin user created successfully!")
     print(f"Username: {username}")
     print(f"Password: {password}")
 else:
-    print("❌ Admin user already exists!")
+    print("Admin user already exists!")

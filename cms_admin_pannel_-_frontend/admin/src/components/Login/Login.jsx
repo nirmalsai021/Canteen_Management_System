@@ -21,7 +21,7 @@ const Login = ({ setIsLoggedIn }) => {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/admin/login/`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

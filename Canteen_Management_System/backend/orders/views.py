@@ -3,6 +3,8 @@ from rest_framework import generics, status, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.timezone import now
@@ -21,7 +23,7 @@ from .serializers import (
 class IsAdminOrSimpleToken(BasePermission):
     """Custom permission for admin access with token"""
     def has_permission(self, request, view):
-        # Check if user is authenticated with token
+        # Check if user is authenticated with token (allow any authenticated user for admin endpoints)
         return request.user and request.user.is_authenticated
 
 class CustomerOrderListView(generics.ListAPIView):
@@ -109,8 +111,8 @@ def cancel_order(request, order_id):
 class AdminOrderListView(generics.ListAPIView):
     """Admin view to list all orders with filtering"""
     serializer_class = OrderSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Allow any authenticated user (admin token)
     queryset = Order.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'user']
@@ -118,14 +120,27 @@ class AdminOrderListView(generics.ListAPIView):
     ordering_fields = ['created_at', 'total_amount', 'status']
     ordering = ['-created_at']
 
+    def get_queryset(self):
+        # Allow access for any authenticated user (admin token authentication)
+        if self.request.user.is_authenticated:
+            return Order.objects.all()
+        return Order.objects.none()
+
 class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
     """Admin view to get and update order details"""
     serializer_class = OrderSerializer
-    permission_classes = [IsAdminUser]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Allow any authenticated user (admin token)
     queryset = Order.objects.all()
 
+    def get_queryset(self):
+        # Allow access for any authenticated user (admin token authentication)
+        if self.request.user.is_authenticated:
+            return Order.objects.all()
+        return Order.objects.none()
+
 @api_view(['PATCH'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def update_order_status(request, order_id):
     """Admin endpoint to update order status"""
     try:
@@ -160,7 +175,7 @@ def update_order_status(request, order_id):
         }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def daily_order_summary(request):
     """Get daily order summary for admin dashboard"""
     today = now().date()

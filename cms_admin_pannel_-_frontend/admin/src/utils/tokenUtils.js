@@ -1,5 +1,5 @@
 // Token management utility for admin panel
-const TOKEN_KEY = 'adminToken';
+const TOKEN_KEY = 'admin-token';
 
 export const tokenUtils = {
   // Get admin token
@@ -27,12 +27,13 @@ export const tokenUtils = {
   // Clear all possible token keys (for clean logout)
   clearAllTokens: () => {
     const keysToRemove = [
+      'admin-token',
       'adminToken',
-      'admin_access_token', 
+      'admin_access_token',
       'access_token',
       'refresh_token'
     ];
-    
+
     keysToRemove.forEach(key => {
       localStorage.removeItem(key);
     });
