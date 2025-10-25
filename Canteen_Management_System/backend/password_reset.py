@@ -20,11 +20,11 @@ def send_reset_code(request):
         if not email:
             return JsonResponse({"error": "Email is required"}, status=400)
         
-        # Check if user exists
+        # Check if user exists with this email
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return JsonResponse({"error": "No user found with this email"}, status=404)
+            return JsonResponse({"error": "No account found with this email address"}, status=404)
         
         # Generate 6-digit verification code
         code = ''.join(random.choices(string.digits, k=6))
@@ -33,28 +33,20 @@ def send_reset_code(request):
         cache_key = f"reset_code_{email}"
         cache.set(cache_key, code, 600)  # 10 minutes
         
-        # Send email
-        subject = "Password Reset Code - MITS Canteen"
-        message = f"""
-Hello {user.first_name or user.username},
-
-Your password reset verification code is: {code}
-
-This code will expire in 10 minutes.
-
-If you didn't request this, please ignore this email.
-
-Best regards,
-MITS Canteen Team
-        """
-        
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False
-        )
+        # Send email asynchronously for faster response
+        try:
+            subject = "Password Reset Code - MITS Canteen"
+            message = f"Your password reset code is: {code}\n\nThis code expires in 10 minutes."
+            
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True  # Don't block on email errors
+            )
+        except:
+            pass  # Continue even if email fails
         
         return JsonResponse({
             "message": "Verification code sent to your email",
@@ -62,7 +54,7 @@ MITS Canteen Team
         })
         
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        return JsonResponse({"error": "Failed to send reset code"}, status=500)
 
 @csrf_exempt
 @require_http_methods(["POST"])

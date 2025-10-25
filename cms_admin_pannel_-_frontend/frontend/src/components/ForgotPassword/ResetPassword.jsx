@@ -17,6 +17,20 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    // Validate code
+    if (code.length !== 6 || !/^\d{6}$/.test(code)) {
+      setError('Please enter a valid 6-digit code');
+      return;
+    }
+    
+    // Validate password
     if (newPassword.length < 6) {
       setError('Password must be at least 6 characters');
       return;
@@ -42,13 +56,21 @@ const ResetPassword = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Password reset successfully! Redirecting to login...');
-        setTimeout(() => navigate('/login'), 2000);
+        setMessage('Password reset successfully! Redirecting...');
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        setError(data.error || 'Failed to reset password');
+        if (response.status === 404) {
+          setError('No account found with this email address');
+        } else if (data.error?.includes('expired')) {
+          setError('Verification code has expired. Please request a new code.');
+        } else if (data.error?.includes('Invalid')) {
+          setError('Invalid verification code. Please check and try again.');
+        } else {
+          setError(data.error || 'Failed to reset password');
+        }
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }

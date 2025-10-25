@@ -11,6 +11,14 @@ const EmailVerification = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     setMessage('');
@@ -27,15 +35,19 @@ const EmailVerification = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Verification code sent to your email!');
+        setMessage('Verification code sent! Redirecting...');
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
-        }, 1500);
+        }, 1000);
       } else {
-        setError(data.error || 'Failed to send verification code');
+        if (response.status === 404) {
+          setError('No account found with this email address. Please check your email or register first.');
+        } else {
+          setError(data.error || 'Failed to send verification code');
+        }
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
