@@ -6,6 +6,9 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
+// Add request timeout
+api.defaults.timeout = 10000; // 10 seconds
+
 api.interceptors.request.use((config) => {
   const userToken = localStorage.getItem("user-token");
   const adminToken = localStorage.getItem("admin-token");
@@ -22,9 +25,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to handle 401 errors
+// Add response interceptor to handle errors and caching
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Cache menu data for 5 minutes
+    if (response.config.url?.includes('/api/menu/customer')) {
+      const cacheKey = `menu_${response.config.url}`;
+      const cacheData = {
+        data: response.data,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('user-token');
@@ -37,5 +51,25 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Cache helper function
+api.getCached = async (url, maxAge = 300000) => { // 5 minutes default
+  const cacheKey = `menu_${url}`;
+  const cached = localStorage.getItem(cacheKey);
+  
+  if (cached) {
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp < maxAge) {
+      return { data };
+    }
+  }
+  
+  return api.get(url);
+};
+
+// Keep backend alive
+setInterval(() => {
+  api.get('/api/menu/customer/').catch(() => {});
+}, 300000); // Ping every 5 minutes
 
 export default api;
