@@ -136,15 +136,11 @@ WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 
 # ===================== EMAIL SETTINGS =====================
-# Use SendGrid SMTP with API key as password
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')  # Always 'apikey' for SendGrid
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')  # Use SendGrid API key as password
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'birthdaywisher2025@gmail.com')
+# Use SendGrid HTTPS API (works on Render)
+EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'birthdaywisher2025@gmail.com')
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 # ===================== CACHE SETTINGS =====================
 CACHES = {
