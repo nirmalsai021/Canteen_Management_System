@@ -182,8 +182,19 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     if (path.startsWith('http')) return path;
     
     const baseUrl = process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com';
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return `${baseUrl}${cleanPath}`;
+    
+    // Handle both static and media paths
+    if (path.startsWith('images/')) {
+      // Static images
+      return `${baseUrl}/static/${path}`;
+    } else if (path.startsWith('menu_images/')) {
+      // Media images (with fallback)
+      return `${baseUrl}/media/${path}`;
+    } else {
+      // Default handling
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+      return `${baseUrl}${cleanPath}`;
+    }
   };
 
   /* ─────────── Render ─────────── */
