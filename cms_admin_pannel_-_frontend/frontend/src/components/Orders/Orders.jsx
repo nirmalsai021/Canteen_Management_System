@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import './Orders.css';
 
 const Orders = () => {
@@ -7,11 +7,6 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [cancellingOrder, setCancellingOrder] = useState(null);
-
-  const token =
-    localStorage.getItem('customer_access_token') ||
-    localStorage.getItem('access_token') ||
-    '';
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -24,21 +19,12 @@ const Orders = () => {
     CANCELLED: 'Cancelled',
   };
 
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
   const fetchOrders = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/orders/`,
-        axiosConfig
-      );
+      const { data } = await api.get('/api/orders/');
       const apiOrders = data.results ?? data;
 
       let unsavedLocal = [];
@@ -70,11 +56,7 @@ const Orders = () => {
     setCancellingOrder(orderId);
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/orders/${orderId}/cancel/`,
-        {},
-        axiosConfig
-      );
+      await api.post(`/api/orders/${orderId}/cancel/`, {});
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>

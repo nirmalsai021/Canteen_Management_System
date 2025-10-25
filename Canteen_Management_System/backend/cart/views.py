@@ -2,7 +2,7 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -19,7 +19,7 @@ from menu.models import MenuItem
 class CartDetailView(generics.RetrieveAPIView):
     """Get current user's cart"""
     serializer_class = CartSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self):

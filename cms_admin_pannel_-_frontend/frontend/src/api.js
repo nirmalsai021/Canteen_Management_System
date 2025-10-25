@@ -12,17 +12,16 @@ api.defaults.timeout = 60000; // 60 seconds for Render cold start
 api.interceptors.request.use((config) => {
   // Get JWT token first (for user authentication)
   const accessToken = localStorage.getItem("access_token");
-  const userToken = localStorage.getItem("user-token");
   const adminToken = localStorage.getItem("admin-token");
   
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
-  } else if (userToken && userToken.includes('.')) {
-    config.headers.Authorization = `Bearer ${userToken}`;
+    console.log('🔑 Using JWT Bearer token');
   } else if (adminToken) {
     config.headers.Authorization = `Token ${adminToken}`;
-  } else if (userToken) {
-    config.headers.Authorization = `Token ${userToken}`;
+    console.log('🔑 Using admin token');
+  } else {
+    console.log('⚠️ No authentication token found');
   }
   return config;
 });
@@ -43,12 +42,12 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('user-token');
-      localStorage.removeItem('admin-token');
+      console.log('❌ 401 Unauthorized - clearing tokens');
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
-      console.log('Authentication failed - tokens cleared');
+      localStorage.removeItem('admin-token');
+      // Don't redirect here, let components handle it
     }
     return Promise.reject(error);
   }

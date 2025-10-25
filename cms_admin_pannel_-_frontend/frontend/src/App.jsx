@@ -31,11 +31,13 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   const fetchCart = async () => {
     const token = localStorage.getItem('access_token');
     if (!token) {
+      console.log('🔒 No access token - clearing cart');
       setCart({});
       return;
     }
 
     try {
+      console.log('🛒 Fetching cart with token:', token.substring(0, 20) + '...');
       const res = await api.get('/api/cart/');
       const cartItems = res.data.items ?? res.data.cart_items ?? [];
       const updatedCart = {};
@@ -64,11 +66,14 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       setCart(updatedCart);
       console.log('✅ Cart synced:', updatedCart);
     } catch (err) {
+      console.error('❌ Failed to fetch cart:', err);
       if (err.response?.status === 401) {
-        console.log('Not authenticated - clearing cart');
+        console.log('🔒 Authentication failed - clearing cart and redirecting');
         setCart({});
-      } else {
-        console.error('❌ Failed to fetch cart:', err);
+        setIsLoggedIn(false);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
       }
     }
   };
@@ -83,6 +88,8 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     const existingItem = cart[item.id];
 
     try {
+      console.log('🛒 Adding to cart:', item.name, 'Token:', token.substring(0, 20) + '...');
+      
       if (existingItem) {
         const newQty = existingItem.quantity + 1;
         await api.put(`/api/cart/items/${existingItem.cart_item_id}/update/`, { quantity: newQty });
@@ -110,13 +117,15 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         console.log(`🛒 Item added: ${item.name}`);
       }
     } catch (err) {
+      console.error('❌ Add to cart failed:', err);
       if (err.response?.status === 401) {
         alert('Your session has expired. Please log in again.');
+        setIsLoggedIn(false);
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
         window.location.href = '/login';
       } else {
-        console.error('❌ Add to cart failed:', err);
         alert('Failed to add item to cart. Please try again.');
       }
     }

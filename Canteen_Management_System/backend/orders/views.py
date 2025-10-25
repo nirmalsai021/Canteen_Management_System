@@ -2,7 +2,7 @@
 from rest_framework import generics, status, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
-from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.timezone import now
@@ -27,6 +27,7 @@ class IsAdminOrSimpleToken(BasePermission):
 class CustomerOrderListView(generics.ListAPIView):
     """List all orders for the authenticated customer"""
     serializer_class = OrderSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['status']
@@ -39,6 +40,7 @@ class CustomerOrderListView(generics.ListAPIView):
 class CustomerOrderDetailView(generics.RetrieveAPIView):
     """Get specific order details for the authenticated customer"""
     serializer_class = OrderSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -107,7 +109,7 @@ def cancel_order(request, order_id):
 class AdminOrderListView(generics.ListAPIView):
     """Admin view to list all orders with filtering"""
     serializer_class = OrderSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
