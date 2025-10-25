@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './AddMenu.css';
 import { tokenUtils } from '../../utils/tokenUtils';
+import api from '../../utils/api';
 
 const AddMenu = ({ onAddMenuItem }) => {
   const [menuItem, setMenuItem] = useState({
@@ -95,11 +96,6 @@ const AddMenu = ({ onAddMenuItem }) => {
 
       let response;
 
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
-
       if (image) {
         // Use FormData for image upload
         const formData = new FormData();
@@ -110,11 +106,7 @@ const AddMenu = ({ onAddMenuItem }) => {
         formData.append('category', menuItem.category);
         formData.append('image', image);
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/add/`, {
-          method: 'POST',
-          headers,
-          body: formData
-        });
+        response = await api.post('/api/menu/add/', formData);
       } else {
         // Use JSON for text-only data
         const payload = {
@@ -125,42 +117,10 @@ const AddMenu = ({ onAddMenuItem }) => {
           category: menuItem.category
         };
 
-        response = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/add/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...headers
-          },
-          body: JSON.stringify(payload)
-        });
+        response = await api.post('/api/menu/add/', payload);
       }
 
-      if (!response.ok) {
-        // Handle different error types
-        if (response.status === 401) {
-          throw new Error('Unauthorized. Please login again.');
-        } else if (response.status === 403) {
-          throw new Error('Forbidden. Admin access required.');
-        } else if (response.status === 400) {
-          const errorData = await response.json();
-          
-          // Format validation errors
-          let errorMessage = 'Validation errors:\n';
-          Object.keys(errorData).forEach(field => {
-            if (Array.isArray(errorData[field])) {
-              errorMessage += `${field}: ${errorData[field].join(', ')}\n`;
-            } else {
-              errorMessage += `${field}: ${errorData[field]}\n`;
-            }
-          });
-          
-          throw new Error(errorMessage);
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
-
-      const data = await response.json();
+      const data = response.data;
       
       // Success - call parent callback if provided
       if (onAddMenuItem) {
@@ -187,7 +147,22 @@ const AddMenu = ({ onAddMenuItem }) => {
       }
 
     } catch (err) {
-      setError(err.message);
+      console.error('Add menu error:', err.response?.data);
+      
+      if (err.response?.status === 400) {
+        const errorData = err.response.data;
+        let errorMessage = 'Validation errors:\n';
+        Object.keys(errorData).forEach(field => {
+          if (Array.isArray(errorData[field])) {
+            errorMessage += `${field}: ${errorData[field].join(', ')}\n`;
+          } else {
+            errorMessage += `${field}: ${errorData[field]}\n`;
+          }
+        });
+        setError(errorMessage);
+      } else {
+        setError(err.response?.data?.error || err.message || 'Failed to add menu item');
+      }
     } finally {
       setLoading(false);
     }

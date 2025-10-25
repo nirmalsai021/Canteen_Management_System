@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',  # Add this for CORS
+    'corsheaders',
 
     # Your apps
     'users',
@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'bookings',
     'core',
     'cart',
-    
 ]
 
 # ===================== MIDDLEWARE =====================
@@ -128,8 +127,23 @@ USE_TZ = True
 # ===================== STATIC / MEDIA FILES =====================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ===================== MEDIA FILES =====================
+if DEBUG:
+    # Local development
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    # Production - use external storage or serve via Django
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    # Ensure media directory exists
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
+    os.makedirs(os.path.join(MEDIA_ROOT, 'menu_images'), exist_ok=True)
+
+# ===================== PRODUCTION STATIC FILES =====================
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # ===================== AUTO FIELD =====================

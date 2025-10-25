@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ListItems.css';
 import { tokenUtils } from '../../utils/tokenUtils';
+import api from '../../utils/api';
 
 const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   /* ─────────── State ─────────── */
@@ -30,29 +31,16 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     setError('');
 
     try {
-      const token = getAdminToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
-
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/`, {
-        headers,
-      });
-
-      if (res.ok) {
-        setMenuItems(await res.json());
-      } else if (res.status === 401) {
+      const res = await api.get('/api/menu/');
+      setMenuItems(res.data);
+    } catch (err) {
+      if (err.response?.status === 401) {
         setError('Unauthorized. Please login again.');
-        localStorage.clear();
-      } else if (res.status === 403) {
+      } else if (err.response?.status === 403) {
         setError('Forbidden. Admin access required.');
       } else {
-        const err = await res.json().catch(() => ({}));
-        setError(err.error || `Failed to fetch menu items (${res.status})`);
+        setError(err.response?.data?.error || 'Network error. Please check your connection.');
       }
-    } catch (err) {
-      setError('Network error. Please check your connection.');
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +84,6 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const itemId = menuItems[editIndex].id;
-      const token = getAdminToken();
       
       const payload = {
         name: editedItem.name.trim(),
@@ -106,40 +93,28 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
         category: editedItem.category,
       };
       
-      if (editedItem.image && editedItem.image.trim()) {
+      // Don't send image field if it's empty or unchanged
+      if (editedItem.image && editedItem.image.trim() && editedItem.image !== menuItems[editIndex].image) {
         payload.image = editedItem.image.trim();
       }
       
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/${itemId}/update/`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Token ${token}` })
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await api.put(`/api/menu/${itemId}/update/`, payload);
       
-      if (response.ok) {
-        const updatedItem = await response.json();
-        setMenuItems(prev => {
-          const next = [...prev];
-          next[editIndex] = updatedItem;
-          return next;
-        });
-        
-        setEditIndex(null);
-        setEditedItem({});
-        onUpdateMenuItem?.(editIndex, updatedItem);
-        alert('Menu item updated successfully!');
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Update failed (${response.status})`);
-      }
+      const updatedItem = response.data;
+      setMenuItems(prev => {
+        const next = [...prev];
+        next[editIndex] = updatedItem;
+        return next;
+      });
+      
+      setEditIndex(null);
+      setEditedItem({});
+      onUpdateMenuItem?.(editIndex, updatedItem);
+      alert('Menu item updated successfully!');
     } catch (err) {
-      alert(`Update failed: ${err.message}`);
+      console.error('Update error:', err.response?.data);
+      const errorMsg = err.response?.data?.details || err.response?.data?.error || err.message;
+      alert(`Update failed: ${errorMsg}`);
     }
   };
 
@@ -149,26 +124,15 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const itemId = menuItems[index].id;
-      const token = getAdminToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
       
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/${itemId}/delete/`,
-        { method: 'DELETE', headers }
-      );
+      await api.delete(`/api/menu/${itemId}/delete/`);
       
-      // Remove from local state regardless of backend response
       setMenuItems(prev => prev.filter((_, i) => i !== index));
       onDeleteMenuItem?.(index);
       alert('Menu item deleted successfully!');
     } catch (err) {
-      // Still remove locally even if backend fails
-      setMenuItems(prev => prev.filter((_, i) => i !== index));
-      onDeleteMenuItem?.(index);
-      alert('Menu item deleted successfully!');
+      console.error('Delete failed:', err);
+      alert(`Delete failed: ${err.response?.data?.error || err.message}`);
     }
   };
 
@@ -180,7 +144,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
     
-    const baseUrl = process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com';
+    const baseUrl = 'https://canteen-backend-bbqk.onrender.com';
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     return `${baseUrl}${cleanPath}`;
   };
@@ -248,7 +212,10 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
                               src={getImageUrl(editedItem.image)}
                               alt={editedItem.name}
                               className="menu-item-image-small"
-                              onError={e => (e.target.style.display = 'none')}
+                              onError={e => {
+                                e.target.onerror = null;
+                                e.target.src = 'https://via.placeholder.com/100x80/f0f0f0/666666?text=No+Image';
+                              }}
                             />
                           )}
                           <input
@@ -337,11 +304,16 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
                               alt={item.name}
                               className="menu-item-image-small"
                               onError={e => {
-                                e.target.style.display = 'none';
+                                e.target.onerror = null;
+                                e.target.src = 'https://via.placeholder.com/100x80/f0f0f0/666666?text=No+Image';
                               }}
                             />
                           ) : (
-                            <div className="no-image-placeholder">No Image</div>
+                            <img
+                              src="https://via.placeholder.com/100x80/f0f0f0/666666?text=No+Image"
+                              alt="No Image"
+                              className="menu-item-image-small"
+                            />
                           )}
                         </div>
                       </td>

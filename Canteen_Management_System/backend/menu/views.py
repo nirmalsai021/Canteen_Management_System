@@ -130,11 +130,19 @@ def update_item(request, pk):
     except MenuItem.DoesNotExist:
         return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = MenuItemSerializer(item, data=request.data, partial=True)
+    # Handle partial updates properly
+    partial = request.method == 'PATCH'
+    serializer = MenuItemSerializer(item, data=request.data, partial=partial)
+    
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Return detailed error information
+    return Response({
+        'error': 'Validation failed',
+        'details': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

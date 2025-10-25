@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const BASE_URL = process.env.REACT_APP_API_URL || "https://canteen-backend-bbqk.onrender.com";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -18,5 +18,18 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Add response interceptor to handle 401 errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('user-token');
+      localStorage.removeItem('user');
+      console.log('Authentication failed - tokens cleared');
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

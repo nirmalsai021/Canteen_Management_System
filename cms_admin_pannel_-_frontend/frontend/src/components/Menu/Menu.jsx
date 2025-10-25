@@ -57,7 +57,7 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
           ? '/api/menu/customer/search/'
           : '/api/menu/customer/';
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}${url}`, { params });
+      const response = await axios.get(`https://canteen-backend-bbqk.onrender.com${url}`, { params });
 
       setMenuItems(response.data);
     } catch (err) {
@@ -126,14 +126,13 @@ const Menu = ({ cart = {}, fetchCart, addToCart, removeFromCart }) => {
             menuItems.map((item) => (
               <div key={item.id} className="food-card">
                 <img
-                  src={item.image ? (item.image.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}${item.image}`) : '/no-image.svg'}
+                  src={item.image ? (item.image.startsWith('http') ? item.image : `https://canteen-backend-bbqk.onrender.com${item.image}`) : 'https://via.placeholder.com/300x200/f0f0f0/666666?text=No+Image'}
                   alt={item.name}
                   className="food-image"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/no-image.svg';
+                    e.target.src = 'https://via.placeholder.com/300x200/f0f0f0/666666?text=No+Image';
                   }}
-                  onLoad={() => console.log('Image loaded:', item.image)}
                 />
                 <h3>{item.name}</h3>
                 <p>₹{parseFloat(item.price || 0).toFixed(2)}</p>

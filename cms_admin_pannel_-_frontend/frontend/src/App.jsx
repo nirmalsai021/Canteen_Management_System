@@ -35,7 +35,10 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   // ✅ Fetch cart function
   const fetchCart = async () => {
     const token = localStorage.getItem('user-token');
-    if (!token) return;
+    if (!token) {
+      setCart({});
+      return;
+    }
 
     try {
       const res = await api.get('/api/cart/');
@@ -68,7 +71,12 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       setCart(updatedCart);
       console.log('✅ Cart synced:', updatedCart);
     } catch (err) {
-      console.error('❌ Failed to fetch cart:', err);
+      if (err.response?.status === 401) {
+        console.log('Not authenticated - clearing cart');
+        setCart({});
+      } else {
+        console.error('❌ Failed to fetch cart:', err);
+      }
     }
   };
 
@@ -116,7 +124,15 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         console.log(`🛒 Item added: ${item.name}`);
       }
     } catch (err) {
-      console.error('❌ Add to cart failed:', err);
+      if (err.response?.status === 401) {
+        alert('Your session has expired. Please log in again.');
+        localStorage.removeItem('user-token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      } else {
+        console.error('❌ Add to cart failed:', err);
+        alert('Failed to add item to cart. Please try again.');
+      }
     }
   };
 
