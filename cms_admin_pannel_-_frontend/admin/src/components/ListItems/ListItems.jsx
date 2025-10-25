@@ -16,7 +16,6 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     { display: 'Lunch',     value: 'lunch'     },
     { display: 'Drinks',    value: 'drinks'    },
     { display: 'Snacks',    value: 'snacks'    },
-    { display: 'Juices',    value: 'juices'    },
   ];
 
   const getAdminToken = () => {

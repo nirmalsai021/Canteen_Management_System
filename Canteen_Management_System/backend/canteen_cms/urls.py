@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
 from admin_login import bulletproof_admin_login
 from simple_admin_auth import simple_admin_login
+from serve_media import serve_media
 
 urlpatterns = [
     # Admin interface
@@ -25,8 +26,11 @@ urlpatterns = [
     
     # JWT Token endpoints
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    # Media files serving
+    path('media/<path:path>', serve_media, name='serve_media'),
 ]
 
-# ✅ Serve media files in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# ✅ Serve media files in both development and production
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
