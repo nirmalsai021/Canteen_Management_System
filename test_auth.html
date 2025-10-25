@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JWT Auth Test</title>
+</head>
+<body>
+    <h1>JWT Authentication Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        // Test JWT authentication
+        async function testAuth() {
+            const token = localStorage.getItem('access_token');
+            const result = document.getElementById('result');
+            
+            if (!token) {
+                result.innerHTML = '<p style="color: red;">❌ No access token found in localStorage</p>';
+                return;
+            }
+            
+            result.innerHTML = '<p>🔑 Token found: ' + token.substring(0, 20) + '...</p>';
+            
+            try {
+                const response = await fetch('https://canteen-backend-bbqk.onrender.com/api/cart/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML += '<p style="color: green;">✅ Cart API working! Items: ' + (data.items?.length || 0) + '</p>';
+                } else {
+                    result.innerHTML += '<p style="color: red;">❌ Cart API failed: ' + response.status + ' ' + response.statusText + '</p>';
+                }
+            } catch (error) {
+                result.innerHTML += '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+        
+        // Run test on page load
+        testAuth();
+    </script>
+</body>
+</html>
