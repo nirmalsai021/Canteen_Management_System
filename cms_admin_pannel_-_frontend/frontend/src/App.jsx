@@ -9,7 +9,8 @@ import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
 import Cart from './components/Cart/Cart';
 import Menu from './components/Menu/Menu';
-import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import EmailVerification from './components/ForgotPassword/EmailVerification';
+import ResetPassword from './components/ForgotPassword/ResetPassword';
 import Profile from './components/Profile/Profile';
 import Orders from './components/Orders/Orders';
 import Intro from './components/Intro/Intro';
@@ -187,7 +188,8 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
             path="/login"
             element={<SignIn setUserEmail={setUserEmail} setIsLoggedIn={setIsLoggedIn} />}
           />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgot-password" element={<EmailVerification />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile email={userEmail} />} />
           <Route path="/orders" element={<Orders />} />
         </Routes>
