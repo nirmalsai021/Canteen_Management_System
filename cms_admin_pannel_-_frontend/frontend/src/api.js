@@ -20,7 +20,7 @@ api.interceptors.request.use((config) => {
   const token = tokens.find(t => t && t !== 'null' && t !== 'undefined');
   
   if (token) {
-    // Use Token auth for admin/user tokens, Bearer for JWT
+    // Always use Bearer for JWT tokens (they contain dots)
     if (token.includes('.')) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
