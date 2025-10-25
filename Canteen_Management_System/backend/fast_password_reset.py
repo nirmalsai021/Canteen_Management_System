@@ -13,18 +13,46 @@ from django.core.cache import cache
 def send_email_async(email, code, user_name):
     """Send email in background thread"""
     try:
-        subject = "Password Reset Code - MITS Canteen"
-        message = f"Your password reset code is: {code}\n\nThis code expires in 10 minutes."
+        # Try SendGrid API first
+        import requests
         
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=True
+        sendgrid_data = {
+            "personalizations": [{
+                "to": [{"email": email}],
+                "subject": "Password Reset Code - MITS Canteen"
+            }],
+            "from": {"email": "birthdaywisher2025@gmail.com"},
+            "content": [{
+                "type": "text/plain",
+                "value": f"Your password reset code is: {code}\n\nThis code expires in 10 minutes."
+            }]
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {settings.SENDGRID_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(
+            "https://api.sendgrid.com/v3/mail/send",
+            json=sendgrid_data,
+            headers=headers,
+            timeout=10
         )
-    except:
-        pass  # Ignore email errors
+        
+        if response.status_code != 202:
+            # Fallback to SMTP
+            send_mail(
+                subject="Password Reset Code - MITS Canteen",
+                message=f"Your password reset code is: {code}\n\nThis code expires in 10 minutes.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True
+            )
+            
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Email sending failed: {e}")
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -58,10 +86,11 @@ def fast_send_code(request):
         email_thread.daemon = True
         email_thread.start()
         
-        # Return immediately
+        # Return immediately with code for testing (remove in production)
         return JsonResponse({
             "message": "Verification code sent to your email",
-            "email": email
+            "email": email,
+            "debug_code": code  # Temporary for testing
         })
         
     except Exception as e:
