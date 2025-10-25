@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
+import api from './api';
 
 import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
@@ -15,39 +15,33 @@ import Orders from './components/Orders/Orders';
 import Intro from './components/Intro/Intro';
 import ServerStatus from './components/ServerStatus';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-
 const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   const [cart, setCart] = useState({});
-  const [showIntro, setShowIntro] = useState(true); // ✅ Splash screen toggle
+  const [showIntro, setShowIntro] = useState(true);
 
-  // ✅ Hide splash screen after 3.5 seconds
   useEffect(() => {
     const timer = setTimeout(() => setShowIntro(false), 3500);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ Fetch cart on mount
   useEffect(() => {
     fetchCart();
   }, []);
 
-  // ✅ Fetch cart function
   const fetchCart = async () => {
     const token = localStorage.getItem('access_token');
-    if (!token) return;
+    if (!token) {
+      setCart({});
+      return;
+    }
 
     try {
-      const res = await axios.get(`${API_BASE}/api/cart/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
-
+      const res = await api.get('/api/cart/');
       const cartItems = res.data.items ?? res.data.cart_items ?? [];
       const updatedCart = {};
 
       cartItems.forEach((item) => {
         const menuItem = item.menu_item;
-
         if (typeof menuItem === 'object' && menuItem !== null) {
           updatedCart[menuItem.id] = {
             cart_item_id: item.id,
@@ -70,11 +64,15 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       setCart(updatedCart);
       console.log('✅ Cart synced:', updatedCart);
     } catch (err) {
-      console.error('❌ Failed to fetch cart:', err);
+      if (err.response?.status === 401) {
+        console.log('Not authenticated - clearing cart');
+        setCart({});
+      } else {
+        console.error('❌ Failed to fetch cart:', err);
+      }
     }
   };
 
-  // ✅ Add to cart
   const addToCart = async (item) => {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -87,25 +85,17 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     try {
       if (existingItem) {
         const newQty = existingItem.quantity + 1;
-        await axios.put(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
-          { quantity: newQty },
-          { headers: { Authorization: `Token ${token}` } }
-        );
+        await api.put(`/api/cart/items/${existingItem.cart_item_id}/update/`, { quantity: newQty });
         setCart({
           ...cart,
           [item.id]: { ...existingItem, quantity: newQty },
         });
         console.log(`🔄 Increased quantity of ${item.name}`);
       } else {
-        const res = await axios.post(
-          `${API_BASE}/api/cart/add/`,
-          {
-            menu_item_id: item.id,
-            quantity: 1,
-          },
-          { headers: { Authorization: `Token ${token}` } }
-        );
+        const res = await api.post('/api/cart/add/', {
+          menu_item_id: item.id,
+          quantity: 1,
+        });
         const newItem = res.data.cart_item;
         setCart({
           ...cart,
@@ -120,11 +110,18 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
         console.log(`🛒 Item added: ${item.name}`);
       }
     } catch (err) {
-      console.error('❌ Add to cart failed:', err);
+      if (err.response?.status === 401) {
+        alert('Your session has expired. Please log in again.');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      } else {
+        console.error('❌ Add to cart failed:', err);
+        alert('Failed to add item to cart. Please try again.');
+      }
     }
   };
 
-  // ✅ Remove from cart
   const removeFromCart = async (item) => {
     const token = localStorage.getItem('access_token');
     if (!token) return;
@@ -136,20 +133,13 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
       const newQty = existingItem.quantity - 1;
 
       if (newQty <= 0) {
-        await axios.delete(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/remove/`,
-          { headers: { Authorization: `Token ${token}` } }
-        );
+        await api.delete(`/api/cart/items/${existingItem.cart_item_id}/remove/`);
         const updatedCart = { ...cart };
         delete updatedCart[item.id];
         setCart(updatedCart);
         console.log(`🗑️ Removed item: ${item.name}`);
       } else {
-        await axios.put(
-          `${API_BASE}/api/cart/items/${existingItem.cart_item_id}/update/`,
-          { quantity: newQty },
-          { headers: { Authorization: `Token ${token}` } }
-        );
+        await api.put(`/api/cart/items/${existingItem.cart_item_id}/update/`, { quantity: newQty });
         setCart({
           ...cart,
           [item.id]: { ...existingItem, quantity: newQty },
@@ -161,7 +151,6 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     }
   };
 
-  // ✅ Conditionally render splash or app
   return showIntro ? (
     <Intro />
   ) : (
@@ -208,7 +197,6 @@ const App = () => {
     return !!localStorage.getItem('access_token');
   });
 
-  // ✅ Prevent zoom on iOS double-tap
   useEffect(() => {
     const preventDefault = (e) => {
       if (e.touches.length > 1) e.preventDefault();

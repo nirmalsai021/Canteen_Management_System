@@ -25,8 +25,10 @@ const SignIn = ({ setUserEmail, setIsLoggedIn }) => {
 
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("user-token", access);
       localStorage.setItem("user", JSON.stringify(user));
+      
+      // Clear any old tokens
+      localStorage.removeItem("user-token");
 
       if (setUserEmail) setUserEmail(user.email);
       if (setIsLoggedIn) setIsLoggedIn(true);

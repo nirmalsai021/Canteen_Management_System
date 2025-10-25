@@ -10,22 +10,19 @@ const api = axios.create({
 api.defaults.timeout = 60000; // 60 seconds for Render cold start
 
 api.interceptors.request.use((config) => {
-  // Try different token sources in order
-  const tokens = [
-    localStorage.getItem("admin-token"),
-    localStorage.getItem("user-token"), 
-    localStorage.getItem("access_token")
-  ];
+  // Get JWT token first (for user authentication)
+  const accessToken = localStorage.getItem("access_token");
+  const userToken = localStorage.getItem("user-token");
+  const adminToken = localStorage.getItem("admin-token");
   
-  const token = tokens.find(t => t && t !== 'null' && t !== 'undefined');
-  
-  if (token) {
-    // Always use Bearer for JWT tokens (they contain dots)
-    if (token.includes('.')) {
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      config.headers.Authorization = `Token ${token}`;
-    }
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  } else if (userToken && userToken.includes('.')) {
+    config.headers.Authorization = `Bearer ${userToken}`;
+  } else if (adminToken) {
+    config.headers.Authorization = `Token ${adminToken}`;
+  } else if (userToken) {
+    config.headers.Authorization = `Token ${userToken}`;
   }
   return config;
 });
