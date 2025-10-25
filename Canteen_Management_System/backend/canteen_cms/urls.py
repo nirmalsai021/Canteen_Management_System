@@ -9,7 +9,7 @@ from simple_admin_auth import simple_admin_login
 from serve_media import serve_media
 from password_reset import send_reset_code, verify_reset_code
 from simple_password_reset import simple_send_code, simple_verify_code
-from fast_password_reset import fast_send_code, fast_verify_code
+from password_reset_secure import secure_send_code, secure_verify_code
 
 urlpatterns = [
     # Admin interface
@@ -34,8 +34,8 @@ urlpatterns = [
     path('media/<path:path>', serve_media, name='serve_media'),
     
     # Password reset endpoints
-    path('api/password-reset/send-code/', fast_send_code, name='send_reset_code'),
-    path('api/password-reset/verify/', fast_verify_code, name='verify_reset_code'),
+    path('api/password-reset/send-code/', secure_send_code, name='send_reset_code'),
+    path('api/password-reset/verify/', secure_verify_code, name='verify_reset_code'),
 ]
 
 # ✅ Serve media files in both development and production
