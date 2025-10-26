@@ -9,6 +9,11 @@ const Profile = () => {
 
   const refreshAccessToken = async () => {
     const refresh = localStorage.getItem('refresh_token');
+    const adminToken = localStorage.getItem('admin-token');
+    
+    // If admin token exists, don't try to refresh JWT
+    if (adminToken) return adminToken;
+    
     if (!refresh) return null;
 
     try {
@@ -29,11 +34,17 @@ const Profile = () => {
       setUserData(res.data);
     } catch (err) {
       if (err.response?.status === 401) {
-        const newToken = await refreshAccessToken();
-        if (newToken) {
-          fetchProfile(newToken);
+        const adminToken = localStorage.getItem('admin-token');
+        if (adminToken) {
+          // Admin token doesn't expire, just retry
+          fetchProfile(adminToken);
         } else {
-          setError('Session expired. Please log in again.');
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            fetchProfile(newToken);
+          } else {
+            setError('Session expired. Please log in again.');
+          }
         }
       } else {
         console.error('Profile fetch error:', err);
@@ -70,7 +81,6 @@ const Profile = () => {
             <p><strong>User Type:</strong> {userData.user_type || 'Customer'}</p>
             {userData.profile && (
               <div>
-                <p><strong>Phone:</strong> {userData.profile.phone || 'Not provided'}</p>
                 {userData.profile.roll_number && <p><strong>Roll Number:</strong> {userData.profile.roll_number}</p>}
                 {userData.profile.address && <p><strong>Address:</strong> {userData.profile.address}</p>}
               </div>

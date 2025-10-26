@@ -42,12 +42,15 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      console.log('❌ 401 Unauthorized - clearing tokens');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('admin-token');
-      // Don't redirect here, let components handle it
+      const adminToken = localStorage.getItem('admin-token');
+      if (!adminToken) {
+        console.log('❌ 401 Unauthorized - clearing JWT tokens');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+      } else {
+        console.log('⚠️ 401 with admin token - keeping admin session');
+      }
     }
     return Promise.reject(error);
   }
