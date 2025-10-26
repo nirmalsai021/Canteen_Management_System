@@ -5,7 +5,7 @@ import './Profile.css';
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
 
   const refreshAccessToken = async () => {
     const refresh = localStorage.getItem('refresh_token');
@@ -24,7 +24,7 @@ const Profile = () => {
 
   const fetchProfile = async (accessToken) => {
     try {
-      const res = await api.get('/api/users/profile/');
+      const res = await api.get('/api/users/profile/info/');
 
       setUserData(res.data);
     } catch (err) {

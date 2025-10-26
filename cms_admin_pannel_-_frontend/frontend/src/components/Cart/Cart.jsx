@@ -8,7 +8,7 @@ const Cart = ({ cart, setCart }) => {
   const [placingOrder, setPlacingOrder] = useState(false); // ✅ Added loader state
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
   const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchCart = async () => {
