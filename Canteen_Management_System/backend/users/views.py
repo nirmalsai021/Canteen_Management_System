@@ -229,18 +229,38 @@ def simple_admin_login(request):
         password = data.get('password')
         
         if username == 'canteen' and password == 'canteen@321':
+            # Create or get admin user and set specific token
+            user, created = User.objects.get_or_create(
+                username='canteen',
+                defaults={
+                    'email': 'canteen@example.com',
+                    'is_staff': True,
+                    'is_superuser': True,
+                    'is_active': True
+                }
+            )
+            
+            if created or not user.check_password('canteen@321'):
+                user.set_password('canteen@321')
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+            
+            # Delete existing token and create specific one
+            Token.objects.filter(user=user).delete()
+            token = Token.objects.create(user=user, key='admin-token-12345')
+            
             return JsonResponse({
                 "access": "admin-token-12345",
-                "refresh": "admin-refresh-12345", 
+                "token": "admin-token-12345",
                 "user": {
-                    "id": 1,
+                    "id": user.id,
                     "username": "canteen",
                     "email": "canteen@example.com",
-                    "first_name": "Admin",
-                    "last_name": "User"
+                    "is_staff": True
                 },
                 "user_type": "admin",
-                "message": "Login successful"
+                "message": "Admin login successful"
             })
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=401)
