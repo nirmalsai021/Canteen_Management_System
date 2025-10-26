@@ -3,8 +3,8 @@
 from django.db import migrations
 
 def create_default_menu_items(apps, schema_editor):
-    from django.core.management import call_command
-    call_command('create_default_items')
+    # Skip creating items here - will be done after URLField migration
+    pass
 
 def reverse_default_menu_items(apps, schema_editor):
     MenuItem = apps.get_model('menu', 'MenuItem')
