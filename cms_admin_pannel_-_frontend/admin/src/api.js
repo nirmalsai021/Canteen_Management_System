@@ -31,8 +31,8 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      console.log('❌ 401 Unauthorized - but keeping admin token for retry');
-      // Don't clear admin token immediately, let user retry
+      console.log('⚠️ 401 Unauthorized - keeping admin token (admin tokens do not expire)');
+      // Never clear admin tokens - they don't expire
     }
     return Promise.reject(error);
   }
