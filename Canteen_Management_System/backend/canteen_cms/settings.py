@@ -137,10 +137,12 @@ WHITENOISE_AUTOREFRESH = True
 
 # ===================== EMAIL SETTINGS =====================
 # Use SendGrid HTTPS API (works on Render)
-EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@canteen-system.com')
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'birthdaywisher2025@gmail.com')
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+# Debug email configuration
+if not SENDGRID_API_KEY:
+    print('⚠️ SENDGRID_API_KEY not configured - emails will show debug codes')
 
 # ===================== CACHE SETTINGS =====================
 CACHES = {

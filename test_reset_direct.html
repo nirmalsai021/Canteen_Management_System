@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>Direct Password Reset Test</title></head>
+<body>
+    <h2>Test Password Reset</h2>
+    <button onclick="testReset()">Send Reset Code</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testReset() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Sending...';
+            
+            try {
+                const response = await fetch('https://canteen-backend-bbqk.onrender.com/api/password-reset/send-code/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'test@example.com' })
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                
+                // Check Render logs NOW for debug output
+                alert('Check Render logs now for email debug info!');
+                
+            } catch (error) {
+                result.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

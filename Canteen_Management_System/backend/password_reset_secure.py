@@ -13,8 +13,15 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-def send_email_with_fallback(email, code, user_name):
-    """Send email using Django backend with console fallback"""
+def send_email_via_sendgrid(email, code, user_name):
+    """Send email using SendGrid HTTPS API"""
+    import requests
+    import os
+    
+    sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+    if not sendgrid_api_key:
+        print("❌ SENDGRID_API_KEY not found in environment variables")
+        return False
     
     subject = "Password Reset Code - MITS Canteen"
     message = f"""Hello {user_name},
@@ -27,47 +34,53 @@ If you didn't request this password reset, please ignore this email.
 
 Best regards,
 MITS Canteen Team"""
-
-    # Try Django's email backend with detailed debugging
+    
+    url = "https://api.sendgrid.com/v3/mail/send"
+    
+    payload = {
+        "personalizations": [{
+            "to": [{"email": email}],
+            "subject": subject
+        }],
+        "from": {"email": settings.DEFAULT_FROM_EMAIL},
+        "content": [{
+            "type": "text/plain",
+            "value": message
+        }]
+    }
+    
+    headers = {
+        "Authorization": f"Bearer {sendgrid_api_key}",
+        "Content-Type": "application/json"
+    }
+    
     try:
-        print(f"\n=== EMAIL DEBUG INFO ===")
-        print(f"EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
-        print(f"EMAIL_HOST: {getattr(settings, 'EMAIL_HOST', 'Not set')}")
-        print(f"EMAIL_HOST_USER: {getattr(settings, 'EMAIL_HOST_USER', 'Not set')}")
-        print(f"EMAIL_HOST_PASSWORD: {'Set' if getattr(settings, 'EMAIL_HOST_PASSWORD', '') else 'Not set'}")
-        print(f"DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+        print(f"\n=== SENDGRID EMAIL DEBUG ===")
+        print(f"API Key: {'Set' if sendgrid_api_key else 'Not set'}")
+        print(f"From: {settings.DEFAULT_FROM_EMAIL}")
         print(f"To: {email}")
         print(f"Reset Code: {code}")
+        print(f"============================\n")
+        
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        
+        print(f"\n=== SENDGRID RESPONSE ===")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
         print(f"========================\n")
         
-        logger.info(f"Attempting to send email to {email} using Django backend")
-        result = send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False
-        )
-        
-        print(f"\n=== EMAIL SEND RESULT ===")
-        print(f"send_mail() returned: {result}")
-        print(f"========================\n")
-        
-        if result:
-            logger.info(f"Email sent successfully to {email} via Django backend")
+        if response.status_code == 202:
+            logger.info(f"Email sent successfully to {email} via SendGrid")
             return True
         else:
-            print(f"\n❌ send_mail() returned 0 - email not sent")
+            logger.error(f"SendGrid API error: {response.status_code} - {response.text}")
             return False
             
     except Exception as e:
-        logger.error(f"Django email backend failed for {email}: {str(e)}")
-        print(f"\n=== EMAIL DELIVERY FAILED ===")
-        print(f"Email: {email}")
-        print(f"Reset Code: {code}")
-        print(f"Error Type: {type(e).__name__}")
-        print(f"Error Message: {str(e)}")
-        print(f"================================\n")
+        logger.error(f"SendGrid API failed for {email}: {str(e)}")
+        print(f"\n=== SENDGRID ERROR ===")
+        print(f"Error: {str(e)}")
+        print(f"=====================\n")
         return False
 
 @csrf_exempt
@@ -95,8 +108,8 @@ def secure_send_code(request):
         
         logger.info(f"Generated reset code {code} for {email}")
         
-        # Try to send email
-        email_sent = send_email_with_fallback(email, code, user.first_name or user.username)
+        # Try to send email via SendGrid
+        email_sent = send_email_via_sendgrid(email, code, user.first_name or user.username)
         
         # Always return success but include debug info if email failed
         response_data = {
