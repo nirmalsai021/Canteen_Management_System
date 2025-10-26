@@ -24,15 +24,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to handle errors
+// Add response interceptor to handle errors - NEVER CLEAR ADMIN TOKENS
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response?.status === 401) {
-      console.log('⚠️ 401 Unauthorized - keeping admin token (admin tokens do not expire)');
-      // Never clear admin tokens - they don't expire
+      console.log('🚫 401 Error - Admin tokens never expire, keeping token');
+      // CRITICAL: Never clear admin tokens under any circumstances
     }
     return Promise.reject(error);
   }
