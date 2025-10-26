@@ -26,7 +26,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     setError('');
 
     try {
-      const response = await api.get('/menu/');
+      const response = await api.get('/api/menu/');
       setMenuItems(response.data);
     } catch (err) {
       if (err.response?.status === 401) {
@@ -77,7 +77,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const itemId = menuItems[editIndex].id;
-      const token = getAdminToken();
+      const token = localStorage.getItem('admin-token');
       
       const payload = {
         name: editedItem.name.trim(),
@@ -131,7 +131,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
 
     try {
       const itemId = menuItems[index].id;
-      const token = getAdminToken();
+      const token = localStorage.getItem('admin-token');
       const headers = {};
       if (token) {
         headers.Authorization = `Token ${token}`;
