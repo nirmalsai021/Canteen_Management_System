@@ -166,7 +166,12 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 # UTILITY VIEWS
 # =============================================================================
 
+from rest_framework.decorators import authentication_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication, JWTAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def user_profile_info(request):
     """Get current user profile information"""
