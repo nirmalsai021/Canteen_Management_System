@@ -10,14 +10,15 @@ const api = axios.create({
 api.defaults.timeout = 60000; // 60 seconds for Render cold start
 
 api.interceptors.request.use((config) => {
-  // Get admin token (stored as 'admin-token')
+  // Get admin token from localStorage
   const adminToken = localStorage.getItem("admin-token");
-
+  
   if (adminToken) {
     config.headers.Authorization = `Token ${adminToken}`;
     console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
   } else {
-    console.log('⚠️ No admin token found');
+    console.log('⚠️ No admin token found in localStorage');
+    console.log('Available keys:', Object.keys(localStorage));
   }
   return config;
 });

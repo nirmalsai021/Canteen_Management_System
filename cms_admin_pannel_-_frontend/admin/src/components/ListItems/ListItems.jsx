@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ListItems.css';
-import { tokenUtils } from '../../utils/tokenUtils';
+import api from '../../api';
 
 const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
   /* ─────────── State ─────────── */
@@ -18,11 +18,7 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     { display: 'Snacks',    value: 'snacks'    },
   ];
 
-  const getAdminToken = () => {
-    const token = tokenUtils.getToken();
-    console.log('Retrieved token:', token);
-    return token;
-  };
+
 
   /* ─────────── Data fetch ─────────── */
   const fetchMenuItems = async () => {
@@ -30,29 +26,14 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     setError('');
 
     try {
-      const token = getAdminToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Token ${token}`;
-      }
-
-      const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/menu/`, {
-        headers,
-      });
-
-      if (res.ok) {
-        setMenuItems(await res.json());
-      } else if (res.status === 401) {
-        setError('Unauthorized. Please login again.');
-        localStorage.clear();
-      } else if (res.status === 403) {
-        setError('Forbidden. Admin access required.');
-      } else {
-        const err = await res.json().catch(() => ({}));
-        setError(err.error || `Failed to fetch menu items (${res.status})`);
-      }
+      const response = await api.get('/menu/');
+      setMenuItems(response.data);
     } catch (err) {
-      setError('Network error. Please check your connection.');
+      if (err.response?.status === 401) {
+        setError('Unauthorized. Please login again.');
+      } else {
+        setError('Failed to fetch menu items.');
+      }
     } finally {
       setIsLoading(false);
     }
