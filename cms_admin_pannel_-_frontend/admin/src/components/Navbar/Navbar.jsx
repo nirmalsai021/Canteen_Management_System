@@ -12,39 +12,21 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     setIsLoggingOut(true);
     
     try {
-      // Get tokens from localStorage
+      // Get admin token from localStorage
       const accessToken = tokenUtils.getToken();
-      const refreshToken = localStorage.getItem('refresh_token');
       
-      if (!accessToken || !refreshToken) {
-        console.warn('No tokens found, performing client-side logout only');
+      if (!accessToken) {
+        console.warn('No admin token found, performing client-side logout only');
         performClientSideLogout();
         return;
       }
 
-      // Call logout API
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/users/logout/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          refresh: refreshToken
-        })
-      });
+      // For admin, just perform client-side logout (no API logout needed)
+      console.log('Admin logout - performing client-side cleanup');
+      performClientSideLogout();
+      return;
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Logout successful:', data.message);
-        performClientSideLogout();
-      } else {
-        // Even if API call fails, perform client-side logout
-        console.error('Logout API failed, but continuing with client-side logout');
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Error details:', errorData);
-        performClientSideLogout();
-      }
+
     } catch (error) {
       // Network error or other issues - still perform client-side logout
       console.error('Logout error:', error);

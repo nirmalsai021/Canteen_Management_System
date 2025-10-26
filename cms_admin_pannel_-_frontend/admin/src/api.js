@@ -9,16 +9,17 @@ const api = axios.create({
 // Add request timeout - longer for cold starts
 api.defaults.timeout = 60000; // 60 seconds for Render cold start
 
+import { tokenUtils } from './utils/tokenUtils';
+
 api.interceptors.request.use((config) => {
-  // Get admin token from localStorage
-  const adminToken = localStorage.getItem("admin-token");
+  // Get admin token using centralized utility
+  const adminToken = tokenUtils.getToken();
   
   if (adminToken) {
     config.headers.Authorization = `Bearer ${adminToken}`;
     console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
   } else {
-    console.log('⚠️ No admin token found in localStorage');
-    console.log('Available keys:', Object.keys(localStorage));
+    console.log('⚠️ No admin token found');
   }
   return config;
 });
