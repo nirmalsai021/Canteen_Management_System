@@ -10,18 +10,14 @@ const api = axios.create({
 api.defaults.timeout = 60000; // 60 seconds for Render cold start
 
 api.interceptors.request.use((config) => {
-  // Get JWT token first (for user authentication)
+  // Get JWT token for customer authentication
   const accessToken = localStorage.getItem("access_token");
-  const adminToken = localStorage.getItem("admin-token");
   
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
     console.log('🔑 Using JWT Bearer token');
-  } else if (adminToken) {
-    config.headers.Authorization = `Token ${adminToken}`;
-    console.log('🔑 Using admin token');
   } else {
-    console.log('⚠️ No authentication token found');
+    console.log('⚠️ No access token found');
   }
   return config;
 });
@@ -42,15 +38,10 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      const adminToken = localStorage.getItem('admin-token');
-      if (!adminToken) {
-        console.log('❌ 401 Unauthorized - clearing JWT tokens');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-      } else {
-        console.log('⚠️ 401 with admin token - keeping admin session');
-      }
+      console.log('❌ 401 Unauthorized - clearing JWT tokens');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
     }
     return Promise.reject(error);
   }

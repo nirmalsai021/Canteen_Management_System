@@ -5,7 +5,7 @@ import './Profile.css';
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
+  const token = localStorage.getItem('access_token');
 
   const refreshAccessToken = async () => {
     const refresh = localStorage.getItem('refresh_token');
