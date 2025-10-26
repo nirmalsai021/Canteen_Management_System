@@ -14,7 +14,7 @@ from django.core.cache import cache
 logger = logging.getLogger(__name__)
 
 def send_email_with_fallback(email, code, user_name):
-    """Send email using Django backend first, then fallback to direct API"""
+    """Send email using Django backend with console fallback"""
     
     subject = "Password Reset Code - MITS Canteen"
     message = f"""Hello {user_name},
@@ -28,7 +28,7 @@ If you didn't request this password reset, please ignore this email.
 Best regards,
 MITS Canteen Team"""
 
-    # Method 1: Try Django's email backend first
+    # Try Django's email backend
     try:
         logger.info(f"Attempting to send email to {email} using Django backend")
         result = send_mail(
@@ -43,43 +43,16 @@ MITS Canteen Team"""
             return True
     except Exception as e:
         logger.error(f"Django email backend failed for {email}: {str(e)}")
-
-    # Method 2: Fallback to direct SendGrid API
-    try:
-        import requests
-        logger.info(f"Attempting to send email to {email} using SendGrid API")
-        
-        url = "https://api.sendgrid.com/v3/mail/send"
-        
-        data = {
-            "personalizations": [{
-                "to": [{"email": email}],
-                "subject": subject
-            }],
-            "from": {"email": settings.DEFAULT_FROM_EMAIL},
-            "content": [{
-                "type": "text/plain",
-                "value": message
-            }]
-        }
-        
-        headers = {
-            "Authorization": f"Bearer {settings.SENDGRID_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        
-        response = requests.post(url, json=data, headers=headers, timeout=30)
-        
-        if response.status_code == 202:
-            logger.info(f"Email sent successfully to {email} via SendGrid API")
-            return True
-        else:
-            logger.error(f"SendGrid API error: {response.status_code} - {response.text}")
-            return False
-        
-    except Exception as e:
-        logger.error(f"SendGrid API failed for {email}: {str(e)}")
+        # Log the code for debugging when email fails
+        logger.info(f"DEBUG: Reset code for {email} is: {code}")
+        print(f"\n=== EMAIL DELIVERY FAILED ===")
+        print(f"Email: {email}")
+        print(f"Reset Code: {code}")
+        print(f"Error: {str(e)}")
+        print(f"================================\n")
         return False
+
+    return False
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -104,19 +77,23 @@ def secure_send_code(request):
         cache_key = f"reset_code_{email}"
         cache.set(cache_key, code, 600)
         
-        logger.info(f"Generated reset code for {email}")
+        logger.info(f"Generated reset code {code} for {email}")
         
-        email_thread = threading.Thread(
-            target=send_email_with_fallback, 
-            args=(email, code, user.first_name or user.username)
-        )
-        email_thread.daemon = True
-        email_thread.start()
+        # Try to send email
+        email_sent = send_email_with_fallback(email, code, user.first_name or user.username)
         
-        return JsonResponse({
+        # Always return success but include debug info if email failed
+        response_data = {
             "message": "Verification code sent to your email",
             "email": email
-        })
+        }
+        
+        # If email failed or in debug mode, include the code
+        if not email_sent or settings.DEBUG:
+            response_data["debug_code"] = code
+            response_data["debug_note"] = "Email delivery may have failed - code provided for testing"
+        
+        return JsonResponse(response_data)
         
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON format"}, status=400)
