@@ -26,4 +26,5 @@ urlpatterns = [
     # Admin-specific endpoints
     path('admin-list/', views.admin_menu_list, name='admin-menu-list'),
     path('admin-orders/', views.admin_orders_list, name='admin-orders-list'),
+    path('reset/', views.reset_menu_items, name='reset-menu-items'),
 ]

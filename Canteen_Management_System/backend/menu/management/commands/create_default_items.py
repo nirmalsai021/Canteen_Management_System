@@ -5,8 +5,9 @@ class Command(BaseCommand):
     help = 'Create default menu items with images'
 
     def handle(self, *args, **options):
-        # Clear existing items first
+        # Clear existing items first (including corrupted ones)
         MenuItem.objects.all().delete()
+        self.stdout.write('🗑️ Cleared existing menu items')
         
         default_items = [
             {'name': 'Masala Puri', 'price': '30.00', 'category': 'snacks', 'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&h=200&fit=crop'},

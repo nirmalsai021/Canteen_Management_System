@@ -1,11 +1,11 @@
-from rest_framework import generics, permissions, filters
+from rest_framework import generics, permissions, filters, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from django.core.management import call_command
 
 from .models import MenuItem
 from .serializers import MenuItemSerializer
@@ -164,3 +164,19 @@ def admin_orders_list(request):
     orders = Order.objects.all().order_by('-created_at')
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reset_menu_items(request):
+    """Reset menu items with proper images - Admin only"""
+    try:
+        call_command('create_default_items')
+        return Response({
+            'message': 'Menu items reset successfully with proper images',
+            'status': 'success'
+        })
+    except Exception as e:
+        return Response({
+            'error': str(e),
+            'status': 'failed'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
