@@ -22,9 +22,34 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Helper function to fix corrupted image URLs
+const fixImageUrl = (url) => {
+  if (!url) return null;
+  
+  // If URL is corrupted with media path, extract the real URL
+  if (url.includes('/media/https%3A')) {
+    const decodedUrl = decodeURIComponent(url.split('/media/')[1]);
+    return decodedUrl;
+  }
+  
+  return url;
+};
+
 // Add response interceptor to handle errors and caching
 api.interceptors.response.use(
   (response) => {
+    // Fix image URLs in menu responses
+    if (response.config.url?.includes('/api/menu/')) {
+      if (Array.isArray(response.data)) {
+        response.data = response.data.map(item => ({
+          ...item,
+          image: fixImageUrl(item.image)
+        }));
+      } else if (response.data.image) {
+        response.data.image = fixImageUrl(response.data.image);
+      }
+    }
+    
     // Cache menu data for 5 minutes
     if (response.config.url?.includes('/api/menu/customer')) {
       const cacheKey = `menu_${response.config.url}`;
