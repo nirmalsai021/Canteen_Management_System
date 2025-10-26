@@ -145,7 +145,7 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
 
 # Debug email configuration
 if not SENDGRID_API_KEY:
-    print('⚠️ SENDGRID_API_KEY not configured - emails will show debug codes')
+    print('WARNING: SENDGRID_API_KEY not configured - emails will show debug codes')
 
 # ===================== CACHE SETTINGS =====================
 CACHES = {
