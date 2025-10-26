@@ -44,8 +44,15 @@ const Orders = () => {
       alert('Order cancelled successfully!');
     } catch (err) {
       console.error('❌ Failed to cancel order:', err);
-      const errorMessage = err.response?.data?.error || 'Failed to cancel order. Please try again.';
-      alert(errorMessage);
+      const errorMessage = err.response?.data?.error || err.response?.data?.debug || 'Failed to cancel order. Please try again.';
+      
+      // If order was actually cancelled (status 200 but error in response), refresh the list
+      if (err.response?.status === 200 || errorMessage.includes('successfully')) {
+        fetchOrders(); // Refresh to show updated status
+        alert('Order cancelled successfully!');
+      } else {
+        alert(`Error: ${errorMessage}`);
+      }
     } finally {
       setCancellingOrder(null);
     }

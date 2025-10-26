@@ -1,4 +1,5 @@
 # orders/views.py
+import logging
 from rest_framework import generics, status, filters
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
@@ -11,6 +12,8 @@ from django.utils.timezone import now
 from django.db.models import Sum, Count, Q
 from django.core.mail import send_mail
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 from .models import Order, OrderItem
 from .serializers import (
@@ -83,10 +86,13 @@ def place_order(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def cancel_order(request, order_id):
     """Cancel order - works for both customers and admins"""
     try:
+        # Check authentication
+        if not request.user.is_authenticated:
+            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        
         # Admin can cancel any order, customer can only cancel their own
         if request.user.is_staff:
             order = Order.objects.get(id=order_id)
@@ -101,11 +107,7 @@ def cancel_order(request, order_id):
         order.status = 'CANCELLED'
         order.save()
         
-        # Log who cancelled the order
-        if request.user.is_staff:
-            logger.info(f"Admin {request.user.username} cancelled order #{order_id}")
-        else:
-            logger.info(f"Customer {request.user.username} cancelled order #{order_id}")
+        print(f"✅ Order #{order_id} cancelled by {request.user.username}")
         
         return Response({
             'message': 'Order cancelled successfully',
@@ -116,6 +118,12 @@ def cancel_order(request, order_id):
         return Response({
             'error': 'Order not found'
         }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"❌ Cancel order error: {str(e)}")
+        return Response({
+            'error': 'Failed to cancel order',
+            'debug': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Admin Views
 class AdminOrderListView(generics.ListAPIView):
