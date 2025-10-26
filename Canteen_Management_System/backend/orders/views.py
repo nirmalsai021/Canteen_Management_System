@@ -129,20 +129,13 @@ def cancel_order(request, order_id):
 class AdminOrderListView(generics.ListAPIView):
     """Admin view to list all orders with filtering"""
     serializer_class = OrderSerializer
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]  # Allow any authenticated user (admin token)
+    permission_classes = []  # No authentication required temporarily
     queryset = Order.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'user']
     search_fields = ['user__username', 'user__email']
     ordering_fields = ['created_at', 'total_amount', 'status']
     ordering = ['-created_at']
-
-    def get_queryset(self):
-        # Allow access for any authenticated user (admin token authentication)
-        if self.request.user.is_authenticated:
-            return Order.objects.all()
-        return Order.objects.none()
 
 class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
     """Admin view to get and update order details"""

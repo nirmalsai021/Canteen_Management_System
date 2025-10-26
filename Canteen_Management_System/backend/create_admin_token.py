@@ -33,16 +33,12 @@ def create_admin_token():
             user.save()
             print(f"✅ Admin user '{user.username}' updated!")
         
-        # Create or get token with specific key
-        token, created = Token.objects.get_or_create(
-            user=user,
-            defaults={'key': 'admin-token-12345'}
-        )
+        # Delete any existing tokens and create new one
+        Token.objects.filter(user=user).delete()
         
-        # If token exists but has different key, update it
-        if not created and token.key != 'admin-token-12345':
-            token.key = 'admin-token-12345'
-            token.save()
+        # Create token with exact key
+        token = Token(user=user, key='admin-token-12345')
+        token.save()
         
         print(f"✅ Admin token created: {token.key}")
         

@@ -94,8 +94,7 @@ def search_menu(request):
 class MenuItemListCreateView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # No authentication required
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'available']
     search_fields = ['name', 'description']
@@ -103,8 +102,7 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
 class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # No authentication required
 
 # Function-based views (for backward compatibility)
 @api_view(['GET'])
@@ -162,14 +160,12 @@ def delete_item(request, pk):
 
 # Admin-specific endpoints
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def admin_menu_list(request):
     items = MenuItem.objects.all()
     serializer = MenuItemSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def admin_orders_list(request):
     # Import here to avoid circular imports
     from orders.models import Order
