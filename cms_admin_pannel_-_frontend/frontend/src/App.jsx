@@ -30,9 +30,9 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   }, []);
 
   const fetchCart = async () => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
     if (!token) {
-      console.log('🔒 No access token - clearing cart');
+      console.log('🔒 No token found - clearing cart');
       setCart({});
       return;
     }
@@ -80,7 +80,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   };
 
   const addToCart = async (item) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
     if (!token) {
       alert('Please log in to add items to your cart.');
       return;
@@ -120,12 +120,17 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
     } catch (err) {
       console.error('❌ Add to cart failed:', err);
       if (err.response?.status === 401) {
-        alert('Your session has expired. Please log in again.');
-        setIsLoggedIn(false);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        const adminToken = localStorage.getItem('admin-token');
+        if (adminToken) {
+          alert('Cart operation failed. Please try again.');
+        } else {
+          alert('Your session has expired. Please log in again.');
+          setIsLoggedIn(false);
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        }
       } else {
         alert('Failed to add item to cart. Please try again.');
       }
@@ -133,7 +138,7 @@ const AppContent = ({ userEmail, setUserEmail, isLoggedIn, setIsLoggedIn }) => {
   };
 
   const removeFromCart = async (item) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('admin-token');
     if (!token) return;
 
     const existingItem = cart[item.id];
@@ -205,7 +210,7 @@ const App = () => {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!localStorage.getItem('access_token');
+    return !!(localStorage.getItem('access_token') || localStorage.getItem('admin-token'));
   });
 
   useEffect(() => {
