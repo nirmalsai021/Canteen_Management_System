@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
   const adminToken = tokenUtils.getToken();
   
   if (adminToken) {
-    config.headers.Authorization = `Bearer ${adminToken}`;
+    config.headers.Authorization = `Token ${adminToken}`;
     console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
   } else {
     console.log('⚠️ No admin token found');
