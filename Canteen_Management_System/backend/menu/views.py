@@ -94,7 +94,8 @@ def search_menu(request):
 class MenuItemListCreateView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = []  # No authentication required
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'available']
     search_fields = ['name', 'description']
@@ -102,23 +103,20 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
 class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    permission_classes = []  # No authentication required
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 # Function-based views (for backward compatibility)
 @api_view(['GET'])
 def list_items(request):
-    """List all menu items - no authentication required for admin panel"""
+    """List all menu items"""
     items = MenuItem.objects.all()
     serializer = MenuItemSerializer(items, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
 def add_item(request):
-    """Add menu item - check for admin token manually"""
-    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    if auth_header != 'Token admin-token-12345':
-        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+    """Add menu item"""
     serializer = MenuItemSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -127,11 +125,7 @@ def add_item(request):
 
 @api_view(['PUT', 'PATCH'])
 def update_item(request, pk):
-    """Update menu item - check for admin token manually"""
-    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    if auth_header != 'Token admin-token-12345':
-        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+    """Update menu item"""
     try:
         item = MenuItem.objects.get(pk=pk)
     except MenuItem.DoesNotExist:
@@ -145,11 +139,7 @@ def update_item(request, pk):
 
 @api_view(['DELETE'])
 def delete_item(request, pk):
-    """Delete menu item - check for admin token manually"""
-    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    if auth_header != 'Token admin-token-12345':
-        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+    """Delete menu item"""
     try:
         item = MenuItem.objects.get(pk=pk)
     except MenuItem.DoesNotExist:
