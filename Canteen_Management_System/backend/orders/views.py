@@ -85,17 +85,27 @@ def place_order(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def cancel_order(request, order_id):
-    """Cancel order if it's still in PLACED or CONFIRMED status"""
+    """Cancel order - works for both customers and admins"""
     try:
-        order = Order.objects.get(id=order_id, user=request.user)
+        # Admin can cancel any order, customer can only cancel their own
+        if request.user.is_staff:
+            order = Order.objects.get(id=order_id)
+        else:
+            order = Order.objects.get(id=order_id, user=request.user)
         
-        if order.status not in ['PLACED', 'CONFIRMED']:
+        if order.status not in ['PLACED', 'CONFIRMED', 'PREPARING']:
             return Response({
                 'error': 'Order cannot be cancelled at this stage'
             }, status=status.HTTP_400_BAD_REQUEST)
         
         order.status = 'CANCELLED'
         order.save()
+        
+        # Log who cancelled the order
+        if request.user.is_staff:
+            logger.info(f"Admin {request.user.username} cancelled order #{order_id}")
+        else:
+            logger.info(f"Customer {request.user.username} cancelled order #{order_id}")
         
         return Response({
             'message': 'Order cancelled successfully',

@@ -61,6 +61,54 @@
   color: #666;
 }
 
+/* Status badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-placed {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-confirmed {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.status-preparing {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-ready {
+  background-color: #e8f5e8;
+  color: #388e3c;
+}
+
+.status-delivered {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+/* Cancel button */
+.cancel-btn {
+  transition: background-color 0.2s;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #c82333 !important;
+}
+
 /* Mobile First - Responsive Design */
 @media (max-width: 480px) {
   .orders-container {

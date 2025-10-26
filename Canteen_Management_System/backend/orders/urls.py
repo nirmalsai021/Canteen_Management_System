@@ -15,4 +15,7 @@ urlpatterns = [
     path('admin/<int:pk>/', views.AdminOrderDetailView.as_view(), name='admin-order-detail'),
     path('admin/<int:order_id>/update-status/', views.update_order_status, name='update-order-status'),
     path('admin/summary/today/', views.daily_order_summary, name='daily-order-summary'),
+    
+    # Admin cancel order (same endpoint as customer but with admin auth)
+    path('<int:order_id>/cancel/', views.cancel_order, name='admin-cancel-order'),
 ]

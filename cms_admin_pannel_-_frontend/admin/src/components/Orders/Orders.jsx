@@ -6,6 +6,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cancellingOrder, setCancellingOrder] = useState(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -23,6 +24,35 @@ const Orders = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
+
+    setCancellingOrder(orderId);
+
+    try {
+      await api.post(`/api/orders/${orderId}/cancel/`);
+      
+      // Update order status in local state
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.id === orderId ? { ...order, status: 'CANCELLED' } : order
+        )
+      );
+
+      alert('Order cancelled successfully!');
+    } catch (err) {
+      console.error('❌ Failed to cancel order:', err);
+      const errorMessage = err.response?.data?.error || 'Failed to cancel order. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setCancellingOrder(null);
+    }
+  };
+
+  const canCancelOrder = (order) => {
+    return !['CANCELLED', 'DELIVERED'].includes(order.status);
   };
 
   useEffect(() => {
@@ -47,6 +77,7 @@ const Orders = () => {
               <th>Total</th>
               <th>Status</th>
               <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -62,8 +93,35 @@ const Orders = () => {
                   ))}
                 </td>
                 <td>₹{parseFloat(order.total_amount || 0).toFixed(2)}</td>
-                <td>{order.status}</td>
+                <td>
+                  <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </td>
                 <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                <td>
+                  {canCancelOrder(order) ? (
+                    <button
+                      className="cancel-btn"
+                      onClick={() => handleCancelOrder(order.id)}
+                      disabled={cancellingOrder === order.id}
+                      style={{
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        border: 'none',
+                        padding: '5px 10px',
+                        borderRadius: '4px',
+                        cursor: cancellingOrder === order.id ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {cancellingOrder === order.id ? 'Cancelling...' : 'Cancel Order'}
+                    </button>
+                  ) : (
+                    <span style={{ color: '#666' }}>
+                      {order.status === 'CANCELLED' ? 'Cancelled' : 'Cannot Cancel'}
+                    </span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
