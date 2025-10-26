@@ -15,8 +15,13 @@ logger = logging.getLogger(__name__)
 
 def send_email_via_sendgrid(email, code, user_name):
     """Send email using SendGrid HTTPS API"""
-    import requests
     import os
+    
+    try:
+        import requests
+    except ImportError:
+        print("❌ requests library not installed")
+        return False
     
     sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
     if not sendgrid_api_key:
@@ -128,7 +133,12 @@ def secure_send_code(request):
         return JsonResponse({"error": "Invalid JSON format"}, status=400)
     except Exception as e:
         logger.error(f"Password reset error: {str(e)}")
-        return JsonResponse({"error": "Failed to send reset code"}, status=500)
+        print(f"❌ Password reset error: {str(e)}")
+        return JsonResponse({
+            "error": "Failed to send reset code",
+            "debug_error": str(e),
+            "debug_code": code if 'code' in locals() else "N/A"
+        }, status=500)
 
 @csrf_exempt
 @require_http_methods(["POST"])
