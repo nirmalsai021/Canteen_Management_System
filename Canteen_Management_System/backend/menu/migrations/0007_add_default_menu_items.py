@@ -16,7 +16,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '30.00',
             'available': True,
             'category': 'snacks',
-            'image': 'menu_images/Masala_Puri.jpg'
+            'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&h=200&fit=crop'
         },
         {
             'name': 'Pani Puri',
@@ -24,7 +24,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '25.00',
             'available': True,
             'category': 'snacks',
-            'image': 'menu_images/Pani_Puri.jpg'
+            'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=300&h=200&fit=crop'
         },
         {
             'name': 'Badam Milk',
@@ -32,7 +32,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '40.00',
             'available': True,
             'category': 'drinks',
-            'image': 'menu_images/Badam_Milk.jpg'
+            'image': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=300&h=200&fit=crop'
         },
         {
             'name': 'Gobi Rice',
@@ -40,7 +40,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '50.00',
             'available': True,
             'category': 'lunch',
-            'image': 'menu_images/Gobi_Rice.jpg'
+            'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=300&h=200&fit=crop'
         },
         {
             'name': 'Egg Rice',
@@ -48,7 +48,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '45.00',
             'available': True,
             'category': 'lunch',
-            'image': 'menu_images/Egg_Rice.jpg'
+            'image': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=200&fit=crop'
         },
         {
             'name': 'Poori',
@@ -56,7 +56,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '20.00',
             'available': True,
             'category': 'breakfast',
-            'image': 'menu_images/Poori.jpg'
+            'image': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=300&h=200&fit=crop'
         },
         {
             'name': 'Egg Puff',
@@ -64,7 +64,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '20.00',
             'available': True,
             'category': 'snacks',
-            'image': 'menu_images/Egg_Puff.jpg'
+            'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&h=200&fit=crop'
         },
         {
             'name': 'Samosa',
@@ -72,7 +72,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '10.00',
             'available': True,
             'category': 'snacks',
-            'image': 'menu_images/Samosa.jpg'
+            'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&h=200&fit=crop'
         },
         {
             'name': 'Curd Rice',
@@ -80,7 +80,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '35.00',
             'available': True,
             'category': 'lunch',
-            'image': 'menu_images/Curd_Rice.jpg'
+            'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=300&h=200&fit=crop'
         },
         {
             'name': 'Parotha',
@@ -88,7 +88,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '30.00',
             'available': True,
             'category': 'breakfast',
-            'image': 'menu_images/Parotha.jpg'
+            'image': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=300&h=200&fit=crop'
         },
         {
             'name': 'Biryani',
@@ -96,7 +96,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '100.00',
             'available': True,
             'category': 'lunch',
-            'image': 'menu_images/Biryani.jpg'
+            'image': 'https://images.unsplash.com/photo-1563379091339-03246963d51a?w=300&h=200&fit=crop'
         },
         {
             'name': 'Tea',
@@ -104,7 +104,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '10.00',
             'available': True,
             'category': 'drinks',
-            'image': 'menu_images/Tea.jpg'
+            'image': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=300&h=200&fit=crop'
         },
         {
             'name': 'Green Tea',
@@ -112,7 +112,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '15.00',
             'available': True,
             'category': 'drinks',
-            'image': 'menu_images/Green_Tea.jpg'
+            'image': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=300&h=200&fit=crop'
         },
         {
             'name': 'Coffee',
@@ -120,7 +120,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '10.00',
             'available': True,
             'category': 'drinks',
-            'image': 'menu_images/Coffee.jpg'
+            'image': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=200&fit=crop'
         },
         {
             'name': 'Dosa',
@@ -128,7 +128,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '25.00',
             'available': True,
             'category': 'breakfast',
-            'image': 'menu_images/Dosa.jpg'
+            'image': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=300&h=200&fit=crop'
         },
         {
             'name': 'Idli',
@@ -136,7 +136,7 @@ def create_default_menu_items(apps, schema_editor):
             'price': '20.00',
             'available': True,
             'category': 'breakfast',
-            'image': 'menu_images/Idli.jpg'
+            'image': 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=300&h=200&fit=crop'
         }
     ]
     
