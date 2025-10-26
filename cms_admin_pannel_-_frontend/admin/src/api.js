@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
 
   if (adminToken) {
     config.headers.Authorization = `Token ${adminToken}`;
-    console.log('🔑 Using admin token');
+    console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
   } else {
     console.log('⚠️ No admin token found');
   }
@@ -29,9 +29,8 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      console.log('❌ 401 Unauthorized - clearing admin token');
-      localStorage.removeItem('admin-token');
-      // Don't redirect here, let components handle it
+      console.log('❌ 401 Unauthorized - but keeping admin token for retry');
+      // Don't clear admin token immediately, let user retry
     }
     return Promise.reject(error);
   }
