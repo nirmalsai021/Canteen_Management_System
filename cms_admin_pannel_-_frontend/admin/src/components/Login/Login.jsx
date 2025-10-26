@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { tokenUtils } from '../../utils/tokenUtils';
 
@@ -9,6 +9,11 @@ const Login = ({ setIsLoggedIn }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Clear any existing tokens on component mount
+  useEffect(() => {
+    tokenUtils.clearAllTokens();
+  }, []);
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -21,7 +26,10 @@ const Login = ({ setIsLoggedIn }) => {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/simple-admin-login/`, {
+      // Clear any existing tokens first
+      tokenUtils.clearAllTokens();
+      
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://canteen-backend-bbqk.onrender.com'}/api/users/simple-admin-login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,15 +41,26 @@ const Login = ({ setIsLoggedIn }) => {
         const data = await response.json();
         console.log('Login response:', data);
         const token = data.access || data.token;
-        tokenUtils.setToken(token);
-        console.log('Token stored:', token);
-        setIsLoggedIn(true);
-        alert('✅ Login successful! Welcome Admin');
+        if (token) {
+          tokenUtils.setToken(token);
+          console.log('Token stored:', token);
+          
+          // Verify token was stored correctly
+          const storedToken = tokenUtils.getToken();
+          console.log('Verified stored token:', storedToken);
+          
+          setIsLoggedIn(true);
+          alert('✅ Login successful! Welcome Admin');
+        } else {
+          console.error('No token received in response:', data);
+          setError('Login failed: No authentication token received');
+        }
       } else {
         const errorData = await response.json().catch(() => ({}));
         setError(errorData.error || 'Invalid credentials. Use: canteen / canteen@321');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('Network error. Please check your connection.');
     }
     

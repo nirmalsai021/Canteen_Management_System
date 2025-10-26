@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Calls</title>
+</head>
+<body>
+    <h1>Test Admin API Calls</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE = 'https://canteen-backend-bbqk.onrender.com';
+        const results = document.getElementById('results');
+        
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_BASE}/api/users/simple-admin-login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'canteen',
+                        password: 'canteen@321'
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.token) {
+                    localStorage.setItem('admin-token', data.token);
+                    results.innerHTML += `<p>✅ Login successful. Token: ${data.token}</p>`;
+                    
+                    // Test menu API
+                    await testMenuAPI(data.token);
+                    
+                    // Test orders API
+                    await testOrdersAPI(data.token);
+                } else {
+                    results.innerHTML += `<p>❌ Login failed: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Login error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testMenuAPI(token) {
+            try {
+                const response = await fetch(`${API_BASE}/api/menu/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<p>✅ Menu API works. Items: ${data.length}</p>`;
+                } else {
+                    results.innerHTML += `<p>❌ Menu API failed: ${response.status}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Menu API error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testOrdersAPI(token) {
+            try {
+                const response = await fetch(`${API_BASE}/api/orders/admin/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<p>✅ Orders API works. Orders: ${data.results ? data.results.length : data.length}</p>`;
+                } else {
+                    results.innerHTML += `<p>❌ Orders API failed: ${response.status}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Orders API error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run tests
+        testLogin();
+    </script>
+</body>
+</html>

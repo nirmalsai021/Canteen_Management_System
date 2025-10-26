@@ -15,11 +15,14 @@ api.interceptors.request.use((config) => {
   // Get admin token using centralized utility
   const adminToken = tokenUtils.getToken();
   
+  console.log('API Request:', config.method?.toUpperCase(), config.url);
+  
   if (adminToken) {
     config.headers.Authorization = `Token ${adminToken}`;
-    console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
+    console.log('Using admin token:', adminToken.substring(0, 10) + '...');
+    console.log('Full Authorization header:', config.headers.Authorization);
   } else {
-    console.log('⚠️ No admin token found');
+    console.log('No admin token found');
   }
   return config;
 });
@@ -41,7 +44,7 @@ const fixImageUrl = (url) => {
   return url;
 };
 
-// Add response interceptor to handle errors - NEVER CLEAR ADMIN TOKENS
+// Add response interceptor to handle errors
 api.interceptors.response.use(
   (response) => {
     // Fix image URLs in menu responses
@@ -58,10 +61,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      console.log('🚫 401 Error - Admin tokens never expire, keeping token');
-      // CRITICAL: Never clear admin tokens under any circumstances
-    }
+    console.log('❌ API Error:', error.response?.status, error.response?.data);
     return Promise.reject(error);
   }
 );

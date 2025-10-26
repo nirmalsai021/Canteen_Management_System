@@ -251,17 +251,16 @@ def simple_admin_login(request):
                 user.is_superuser = True
                 user.save()
             
-            # Delete existing token and create specific one
-            Token.objects.filter(user=user).delete()
-            token = Token.objects.create(user=user, key='admin-token-12345')
+            # Get or create token for the user
+            token, created = Token.objects.get_or_create(user=user)
             
             return JsonResponse({
-                "access": "admin-token-12345",
-                "token": "admin-token-12345",
+                "access": token.key,
+                "token": token.key,
                 "user": {
                     "id": user.id,
-                    "username": "canteen",
-                    "email": "canteen@example.com",
+                    "username": user.username,
+                    "email": user.email,
                     "is_staff": True
                 },
                 "user_type": "admin",

@@ -109,7 +109,7 @@ class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
 # Function-based views (for backward compatibility)
 @api_view(['GET'])
 def list_items(request):
-    """List all menu items"""
+    """List all menu items - No authentication required for backward compatibility"""
     items = MenuItem.objects.all()
     serializer = MenuItemSerializer(items, many=True)
     return Response(serializer.data)

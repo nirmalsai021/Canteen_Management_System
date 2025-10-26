@@ -13,11 +13,17 @@ const Orders = () => {
     setError('');
 
     try {
+      console.log('Fetching orders...');
+      const token = localStorage.getItem('admin-token');
+      console.log('Token for orders:', token);
+      
       // Use the configured API instance which handles authentication
       const response = await api.get('/api/orders/admin/');
+      console.log('Orders response:', response.data);
       setOrders(response.data.results || response.data || []);
     } catch (err) {
       console.error('Error fetching orders:', err);
+      console.error('Error response:', err.response);
       // Fallback to empty orders on network error
       setOrders([]);
       setError('Unable to fetch orders. Check network connection.');

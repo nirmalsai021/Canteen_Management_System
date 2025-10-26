@@ -26,9 +26,15 @@ const ListItems = ({ onUpdateMenuItem, onDeleteMenuItem }) => {
     setError('');
 
     try {
+      console.log('Fetching menu items...');
+      const token = localStorage.getItem('admin-token');
+      console.log('Retrieved token:', token);
+      
       const response = await api.get('/api/menu/');
+      console.log('Menu response:', response.data);
       setMenuItems(response.data);
     } catch (err) {
+      console.error('Menu fetch error:', err);
       if (err.response?.status === 401) {
         setError('Unauthorized. Please login again.');
       } else {
