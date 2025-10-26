@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
   const adminToken = localStorage.getItem("admin-token");
   
   if (adminToken) {
-    config.headers.Authorization = `Token ${adminToken}`;
+    config.headers.Authorization = `Bearer ${adminToken}`;
     console.log('🔑 Using admin token:', adminToken.substring(0, 10) + '...');
   } else {
     console.log('⚠️ No admin token found in localStorage');
