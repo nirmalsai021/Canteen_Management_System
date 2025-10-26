@@ -28,8 +28,18 @@ If you didn't request this password reset, please ignore this email.
 Best regards,
 MITS Canteen Team"""
 
-    # Try Django's email backend
+    # Try Django's email backend with detailed debugging
     try:
+        print(f"\n=== EMAIL DEBUG INFO ===")
+        print(f"EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
+        print(f"EMAIL_HOST: {getattr(settings, 'EMAIL_HOST', 'Not set')}")
+        print(f"EMAIL_HOST_USER: {getattr(settings, 'EMAIL_HOST_USER', 'Not set')}")
+        print(f"EMAIL_HOST_PASSWORD: {'Set' if getattr(settings, 'EMAIL_HOST_PASSWORD', '') else 'Not set'}")
+        print(f"DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+        print(f"To: {email}")
+        print(f"Reset Code: {code}")
+        print(f"========================\n")
+        
         logger.info(f"Attempting to send email to {email} using Django backend")
         result = send_mail(
             subject=subject,
@@ -38,21 +48,27 @@ MITS Canteen Team"""
             recipient_list=[email],
             fail_silently=False
         )
+        
+        print(f"\n=== EMAIL SEND RESULT ===")
+        print(f"send_mail() returned: {result}")
+        print(f"========================\n")
+        
         if result:
             logger.info(f"Email sent successfully to {email} via Django backend")
             return True
+        else:
+            print(f"\n❌ send_mail() returned 0 - email not sent")
+            return False
+            
     except Exception as e:
         logger.error(f"Django email backend failed for {email}: {str(e)}")
-        # Log the code for debugging when email fails
-        logger.info(f"DEBUG: Reset code for {email} is: {code}")
         print(f"\n=== EMAIL DELIVERY FAILED ===")
         print(f"Email: {email}")
         print(f"Reset Code: {code}")
-        print(f"Error: {str(e)}")
+        print(f"Error Type: {type(e).__name__}")
+        print(f"Error Message: {str(e)}")
         print(f"================================\n")
         return False
-
-    return False
 
 @csrf_exempt
 @require_http_methods(["POST"])
