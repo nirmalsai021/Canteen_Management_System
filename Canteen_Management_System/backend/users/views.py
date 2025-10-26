@@ -250,6 +250,44 @@ def simple_admin_login(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def setup_admin(request):
+    """One-time setup endpoint to create admin user and token"""
+    try:
+        # Create or get admin user
+        user, created = User.objects.get_or_create(
+            username='canteen',
+            defaults={
+                'email': 'admin@canteen.com',
+                'is_staff': True,
+                'is_superuser': True,
+                'is_active': True
+            }
+        )
+        
+        # Set password
+        user.set_password('canteen@321')
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        
+        # Delete existing token and create specific one
+        Token.objects.filter(user=user).delete()
+        token = Token.objects.create(user=user, key='admin-token-12345')
+        
+        return Response({
+            'message': 'Admin setup complete',
+            'username': 'canteen',
+            'password': 'canteen@321',
+            'token': token.key,
+            'status': 'success'
+        })
+        
+    except Exception as e:
+        return Response({'error': str(e)}, 
+                      status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # =============================================================================
 # LEGACY TOKEN AUTH (if needed for backwards compatibility)
 # =============================================================================
