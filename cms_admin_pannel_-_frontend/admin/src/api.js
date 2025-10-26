@@ -30,7 +30,11 @@ const fixImageUrl = (url) => {
   
   // If URL is corrupted with media path, extract the real URL
   if (url.includes('/media/https%3A')) {
-    const decodedUrl = decodeURIComponent(url.split('/media/')[1]);
+    let decodedUrl = decodeURIComponent(url.split('/media/')[1]);
+    // Fix missing slash in https:/
+    if (decodedUrl.startsWith('https:/') && !decodedUrl.startsWith('https://')) {
+      decodedUrl = decodedUrl.replace('https:/', 'https://');
+    }
     return decodedUrl;
   }
   
