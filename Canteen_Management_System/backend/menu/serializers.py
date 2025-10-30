@@ -7,6 +7,8 @@ class MenuItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_image(self, value):
-        if not value:
-            raise serializers.ValidationError("Image is required.")
+        if value and hasattr(value, 'size'):
+            # Limit file size to 5MB
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError("Image file too large. Maximum size is 5MB.")
         return value
